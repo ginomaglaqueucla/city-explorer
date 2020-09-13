@@ -93,6 +93,9 @@ function wiki(placeName) {
         })
         .catch(function (error) { console.log(error); });
 
+    // clears out old buttons
+    learnMoreContainer.innerHTML = "";
+
     var article = document.createElement("BUTTON");
     article.innerHTML = "Learn More";
     article.classList = "learn-more-btn";
