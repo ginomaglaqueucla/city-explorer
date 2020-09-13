@@ -1,12 +1,14 @@
 var userFormEl = document.querySelector("#zip-form");
 var zipCodeInputEl = document.getElementById("zip-code");
 var learnMoreContainer = document.getElementById("learn-more-container");
+var localNewsContainer = document.getElementById("local-news-container");
 var map;
 var marker;
 var placeName;
 var lat;
 var lon;
 var articleUrl;
+var newsUrl;
 
 var formSubmitHandler = function (event) {
     event.preventDefault();
@@ -103,6 +105,29 @@ function wiki(placeName) {
         window.open(articleUrl);
     }
     learnMoreContainer.appendChild(article);
+
+    news(placeName);
+}
+
+function news(placeName) {
+    var apiUrl = 'https://gnews.io/api/v3/search?q=' + placeName + '&token=150db8737914007f6a69392f228ed36e';
+
+    fetch(apiUrl)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            console.log(data);
+            newsUrl = data.articles[0].url;
+        });
+
+    var news = document.createElement("button");
+    news.innerHTML = "Local News";
+    news.classList = "local-news-btn";
+    news.onclick = function () {
+        window.open(newsUrl);
+    }
+    localNewsContainer.appendChild(news);
 }
 
 userFormEl.addEventListener("submit", formSubmitHandler);
