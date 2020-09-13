@@ -16,7 +16,7 @@ var formSubmitHandler = function (event) {
 }
 
 function zipCode(zip) {
-    var apiUrl = "http://api.zippopotam.us/us/" + zip;
+    var apiUrl = "https://api.zippopotam.us/us/" + zip;
 
     fetch(apiUrl)
         .then(function (response) {
