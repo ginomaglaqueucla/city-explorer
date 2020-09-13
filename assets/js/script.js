@@ -122,7 +122,7 @@ function news(placeName) {
         });
 
     // clears out old buttons
-    learnMoreContainer.innerHTML = "";
+    localNewsContainer.innerHTML = "";
 
     var news = document.createElement("button");
     news.innerHTML = "Local News";
