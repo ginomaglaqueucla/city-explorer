@@ -121,6 +121,9 @@ function news(placeName) {
             newsUrl = data.articles[0].url;
         });
 
+    // clears out old buttons
+    learnMoreContainer.innerHTML = "";
+
     var news = document.createElement("button");
     news.innerHTML = "Local News";
     news.classList = "local-news-btn";
