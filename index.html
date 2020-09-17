@@ -7,19 +7,19 @@
     <!-- Compressed CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/css/foundation.min.css" integrity="sha256-ogmFxjqiTMnZhxCqVmcqTvjfe1Y/ec4WaRj/aQPvn+I=" crossorigin="anonymous">
     <link rel="stylesheet" href="./assets/css/style.css">
-    <title>City Explorer</title>
+    <title>City Learner</title>
 </head>
 
 <body>
     <header class="hero">
-        <h1 class="title">City Explorer</h1>
+        <h1 class="title">City Learner</h1>
     </header>
 
     <main>
         <!--use Foundation grid for 3-column lay-out-->
         <div class="grid-x grid-margin-x grid-margin-y container">
 
-            <!--column 1: search and saved zip codes-->
+            <!--column 1: city input, food pull-down, event pull-down, saved itineraries-->
             <div class="cell small-12 medium-4">
 
                 <!--column 1 wrapper-->
@@ -27,66 +27,98 @@
 
                     <!--search input area-->
                     <form id="search-form" class="search-form">
-                        <label>Search for a Zip Code:</label>
-                        <input id="zip-input" class="zip-input">
+                        <label>Search by City:</label>
+                        <input id="city-input" class="city-input">
                         <button id="search-button" class="search-button">
                             <i class="fas fa-search"></i>
                         </button>
                     </form>
-    
-                    <!--saved zipcode area-->
+
+                    <!--food options pull-down-->
+                    <label>Type of Food // this shows the non-multi-select version
+                        <!--would be awesome if we could dynamically create the options-->
+                        <select>
+                            <option value="american">American</option>
+                            <option value="italian">Italian</option>
+                            <option value="mexican">Mexican</option>
+                            <option value="etc">Etc</option>
+                        </select>
+                    </label>
+
+                    <!--event options pull-down-->
+                    <label>Type of Event  // this shows the multi-select version
+                        <!--would be awesome if we could dynamically create the options-->
+                        <select multiple>
+                            <option value="outdoor">Outdoor</option>
+                            <option value="indoor">Indoor</option>
+                            <option value="crafts">Crafts</option>
+                            <option value="movies">Movies</option>
+                        </select>
+                    </label>
+
+                    <!--saved itinerary area-->
                     <div class="save-area">
-                        <ul id="saved-zips" class="saved-zips">
-                            <!--random buttons. delete when functionality has been added.-->
-                            <button class="zip-button">90250</button>
-                            <button class="zip-button">90245</button>
-                        </ul>
+                        <ul id="saved-itinerary" class="saved-itinerary">
+
+                            <!--hard code start-->
+                            <!--delete all hard coded code when functionality has been added.-->
+                            <!--class of "button" needs to be used on button element in Foundation buttons-->
+                            <button class="button expanded">Los Angeles</button>
+                            <button class="button expanded">Anaheim</button>
+                            <!--hard code end-->
+
+                         </ul>
                     </div>
 
                 </div>
 
             </div>
 
-            <!--column 2: wikipedia area-->
+            <!--column 2: itinerary area-->
             <div class="cell small-12 medium-4">
-                <div id="wikipedia" class="card wikipedia">
+                <div id="itinerary" class="card itinerary">
+
+                    <!--hard code start-->
                     <!--delete all hard coded code and text when functionality has been added.-->
+                    <!--class of "card-divider" needs to be used to create a card header in Foundation styling-->
                     <div class="card-divider">
-                        This is the wikipedia area.
+                        Itinerary for Los Angeles.  
                     </div>
-                    <img id="wikipedia-pic" src="assets/images/wikipedia_pic.png">
+                    <!--class of "card-section" needs to be applied to create a text section in the Foundation card-->
                     <div class="card-section">
-                        <h4>Dynamically create. This is for layout only.</h4>
+                        <a href="https://www.dunekitchen.com/" class="button event">12:00  Lunch</a>
+                        <a href="https://www.laparks.org/griffithpark/griffith-park-home-page" class="button event"> 2:00  Griffith Park</a>
+                        <a href="http://parksbbq.com/home/" class="button event"> 5:00  Parks BBQ </a>
+                        <a href="https://www.hollywoodbowl.com/" class="button event"> 8:00  Hollywood Bowl</a>
+                        <div>These are buttons that we could link to the respective webpage?</div>
                     </div>
+                    <!--hard code end-->
+
                 </div>
             </div>
 
-            <!--column 3: map and news area-->
+            <!--column 3: map area that shows the directions from place to place-->
             <div class="cell small-12 medium-4">
 
                 <!--column 3 wrapper-->
                 <div class="column-3">
 
                     <div id="map-area" class="card map-area">
-                    <!--delete all hard coded code and text when functionality has been added.-->
-                        <div class="card-divider">
-                            This is the map area.
-                        </div>
-                        <img id="map-pic" src="assets/images/google_map_pic.png">
-                        <div class="card-section">
-                            <h4>Dynamically create. This is for layout only.</h4>
-                        </div>
-                    </div>
 
-                    <div id="news-area" class="card news-area">
-                    <!--delete all hard coded code and text when functionality has been added.-->
+                        <!--hard code start-->
+                        <!--delete all hard coded code and text when functionality has been added.-->
+                        <!--class of "card-divider" needs to be used to create a card header in Foundation styling-->
                         <div class="card-divider">
-                            This is the news area.
+                            This is the map area.  Need a title.
                         </div>
-                        <img id="news-pic" src="assets/images/news_pic.png">
+                        <!--pseudo-code for adding an image-->
+                        <img id="map-pic" src="assets/images/google_map_pic.png">
+                        <!--class of "card-section" needs to be applied to create a text section in the Foundation card-->
                         <div class="card-section">
-                            <h4>Dynamically create. This is for layout only.</h4>
+                            Do we want any text, such as the written directions, under the Google Map?
                         </div>
+                        <!--hard code end-->
+
                     </div>
 
                 </div>
