@@ -1,20 +1,69 @@
-/* Always set the map height explicitly to define the size of the div element that contains the map. */
-#map {
-    height: 50%;
-    width: 50%;
-    padding: 0;
-    margin: 0;
+:root {
+    --background-color: grey;
+    --background-text: white;
+    --border-color: black;
 }
 
-/* Optional: Makes the sample page fill the window. */
-html,
-body,
-main {
-    height: 100%;
-    padding: 0;
-    margin: 0;
+.hero {
+    background-color: var(--background-color);
+    color: var(--background-text);
+    display: flex;
+    justify-content: center;
 }
 
-.learn-more-btn {
-    /* add button css */
+.title {
+    margin-top: 5px;
+}
+
+.container {
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.search-form label {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.city-input {
+    margin: 5px 0;
+    font-size: 18px;
+    padding: 5px;
+}
+
+.search-button {
+    background-color: #33BDFF;
+    color: var(--background-text);
+    border-radius: 3px;
+    border-style: solid;
+    padding: 5px;
+    font-size: 20px;
+    margin-left: -4px;
+}
+
+.saved-itinerary {
+    margin-left: 0;
+    margin-top: 5px;
+}
+
+.event {
+    width: 100%;
+    background-color: var(--background-color);
+    color: var(--background-text);
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    padding: 5px 0;
+    font-weight: bold;
+    font-size: 24px;
+    margin-top: 5px;
+}
+
+.itinerary {
+    border-radius: 10px; 
+}
+
+.map-area {
+    border-radius: 10px;
 }
