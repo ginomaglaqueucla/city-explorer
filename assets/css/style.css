@@ -26,7 +26,7 @@
     font-size: 20px;
 }
 
-.zip-input {
+.city-input {
     margin: 5px 0;
     font-size: 18px;
     padding: 5px;
@@ -42,12 +42,12 @@
     margin-left: -4px;
 }
 
-.saved-zips {
+.saved-itinerary {
     margin-left: 0;
     margin-top: 5px;
 }
 
-.zip-button {
+.event {
     width: 100%;
     background-color: var(--background-color);
     color: var(--background-text);
@@ -60,15 +60,10 @@
     margin-top: 5px;
 }
 
-.wikipedia {
+.itinerary {
     border-radius: 10px; 
 }
 
 .map-area {
     border-radius: 10px;
-}
-
-.news-area {
-    border-radius: 10px;
-    margin-top: 10px;
 }
