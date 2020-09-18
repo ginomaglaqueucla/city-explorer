@@ -77,7 +77,7 @@ function city() {
 // in the future function will take in dietary filter data parameter
 // need to figure out algorithm for breakfast/lunch/dinner sorting
 function restaurants(cityLon, cityLat) {
-    fetch("https://tripadvisor1.p.rapidapi.com/restaurants/list-by-latlng?limit=30&currency=USD&distance=2&lunit=km&lang=en_US&latitude=" 
+    fetch("https://tripadvisor1.p.rapidapi.com/restaurants/list-by-latlng?limit=30&currency=USD&distance=2&lunit=km&lang=en_US&latitude="
         + cityLat + "&longitude=" + cityLon, {
         "method": "GET",
         "headers": {
@@ -130,7 +130,7 @@ function restaurants(cityLon, cityLat) {
 // in the future perhaps combine restaurants and attractions functions to keep code DRY
 // in the future function will take in attraction filter (if possible)
 function attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat) {
-    fetch("https://tripadvisor1.p.rapidapi.com/attractions/list-by-latlng?lunit=km&currency=USD&limit=30&distance=5&lang=en_US&longitude=" 
+    fetch("https://tripadvisor1.p.rapidapi.com/attractions/list-by-latlng?lunit=km&currency=USD&limit=30&distance=5&lang=en_US&longitude="
         + cityLon + "&latitude=" + cityLat, {
         "method": "GET",
         "headers": {
@@ -167,8 +167,8 @@ function attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, resta
 
             console.log(arrFiltered2);
 
-            createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat, 
-                        attractionOneLon, attractionOneLat, attractionTwoLon, attractionTwoLat);
+            createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat,
+                attractionOneLon, attractionOneLat, attractionTwoLon, attractionTwoLat);
         })
         .catch(err => {
             console.log(err);
@@ -181,8 +181,8 @@ function attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, resta
 // dependent on completion of geocCoding & trip advisory data fetch
 // in the future will take in data structure as parameter
 // assign map data to data structure 
-function createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat, 
-                    attractionOneLon, attractionOneLat, attractionTwoLon, attractionTwoLat) {
+function createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat,
+    attractionOneLon, attractionOneLat, attractionTwoLon, attractionTwoLat) {
     // Create the script tag, set the appropriate attributes
     var script = document.createElement('script');
     script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap';
