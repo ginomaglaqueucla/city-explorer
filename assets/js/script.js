@@ -15,16 +15,17 @@ var attractionTwoLon;
 var attractionTwoLat;
 var map;
 var cityData = {
-            userInput : {
-                searchTerm: "",
-                restFilter:"",
-                attractFilter:""
-            },
-            cityCoord : {
-                lat: "",
-                lon: ""
-            },
-            restData : {
+                userInput : {
+                    searchTerm: "",
+                    restFilter:"",
+                    attractFilter:""
+                },
+                cityCoord : {
+                    lat: "",
+                    lon: ""
+                }
+                };
+var restData =  {
                 breakfast : {
                     restName: "",
                     lat: "",
@@ -40,8 +41,8 @@ var cityData = {
                     lat: "",
                     lon: ""
                 }
-            },
-            attractData : {
+                };
+var attractData = {
                 eventOne : {
                     eventName: "",
                     lat: "",
@@ -52,8 +53,9 @@ var cityData = {
                     lat: "",
                     lon: ""
                 }
-            }
-};
+                };
+
+
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
@@ -116,7 +118,7 @@ function city() {
             cityData.cityCoord.lat = parseFloat(cityData.cityCoord.lat);
             console.log(cityData.cityCoord.lon, cityData.cityCoord.lat);
 
-            restaurants(cityData.cityCoord.lon, cityData.cityCoord.lat);
+            restaurants();
         })
         .catch(function (error) {
             console.log(error);
@@ -128,14 +130,14 @@ function city() {
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ----- fetch Trip Advisory  ----- //
 // this function will fetch restaurant data using lat/lon
-// fetched data will be assign to global variables to be used generate random itinerary
+// fetched data will be assign to global vraiables to be used generate random itinerary
 // in the future data will be assigned to data structure
 // in the future use random number generator choose 3 random restaurants
 // in the future function will take in dietary filter data parameter
 // need to figure out algorithm for breakfast/lunch/dinner sorting
-function restaurants(cityLon, cityLat) {
+function restaurants() {
     fetch("https://tripadvisor1.p.rapidapi.com/restaurants/list-by-latlng?limit=30&currency=USD&distance=2&lunit=km&lang=en_US&latitude="
-        + cityLat + "&longitude=" + cityLon, {
+        + cityData.cityCoord.lat + "&longitude=" + cityData.cityCoord.lon, {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
@@ -149,11 +151,12 @@ function restaurants(cityLon, cityLat) {
             console.log(data);
             // console.log(data.data[0]);
             // console.log(data.data[1])
-            restaurantOneLon = data.data[0].longitude;
-            restaurantOneLat = data.data[0].latitude;
-            restaurantTwoLon = data.data[1].longitude;
-            restaurantTwoLat = data.data[1].latitude;
+            restData.breakfast.lon = data.data[0].longitude;
+            restData.breakfast.lat = data.data[0].latitude;
+            restData.lunch.lon = data.data[1].longitude;
+            restData.lunch.lat = data.data[1].latitude;
 
+            // hard coded for now
             var key = 'American';
             var arrFiltered = [];
 
@@ -170,7 +173,7 @@ function restaurants(cityLon, cityLat) {
             console.log(arrFiltered);
 
             // createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat)
-            attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat);
+            // attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat);
         })
         .catch(err => {
             console.log(err);
