@@ -76,6 +76,7 @@ function getUserInput(event) {
     searchForm.reset();
 
     console.log(cityData.userInput.searchTerm);
+    city();
 
     // perform error handling in this function ?
 }
@@ -92,29 +93,30 @@ function getUserInput(event) {
 // in the future fetched data will be a part of the data structure
 // call trip advisory api functions
 function city() {
-    var cityInput = "Beverly Hills, CA";
-    cityInput = " " + cityInput.trim();
-    cityInput = cityInput.replace(" ", "+");
+    var cityString = cityData.userInput.searchTerm
+    cityString = " " + cityString.trim();
+    cityString = cityString.replace(" ", "+");
 
-    console.log(cityInput.indexOf(", "));
+    console.log(cityString.indexOf(", "));
 
-    var check = cityInput.substring(cityInput.indexOf(", ") + 2);
+    var check = cityString.substring(cityString.indexOf(", ") + 2);
     if (check.length !== 2) {
         console.log("error");
+        return;
     }
 
-    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${cityInput}&key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg`)
+    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${cityString}&key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg`)
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
-            cityLon = data.results[0].geometry.location.lng;
-            cityLon = parseFloat(cityLon);
-            cityLat = data.results[0].geometry.location.lat;
-            cityLat = parseFloat(cityLat);
-            console.log(cityLon, cityLat);
+            cityData.cityCoord.lon = data.results[0].geometry.location.lng;
+            cityData.cityCoord.lon = parseFloat(cityData.cityCoord.lon);
+            cityData.cityCoord.lat = data.results[0].geometry.location.lat;
+            cityData.cityCoord.lat = parseFloat(cityData.cityCoord.lat);
+            console.log(cityData.cityCoord.lon, cityData.cityCoord.lat);
 
-            restaurants(cityLon, cityLat);
+            restaurants(cityData.cityCoord.lon, cityData.cityCoord.lat);
         })
         .catch(function (error) {
             console.log(error);
@@ -331,4 +333,4 @@ function createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaur
 // event listener for favorites click
 // event listener for search history click
 searchForm.addEventListener("submit", getUserInput)
-city();
+// city();
