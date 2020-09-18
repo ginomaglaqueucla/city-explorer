@@ -68,9 +68,25 @@
     border-radius: 10px;
 }
 
+<<<<<<< HEAD
+=======
+/* Always set the map height explicitly to define the size of the div element that contains the map. */
+>>>>>>> 4dd011dabd4319696f62a6f82d373da61efec8f4
 #map {
     height: 50%;
     width: 50%;
     padding: 0;
     margin: 0;
+<<<<<<< HEAD
+=======
+}
+
+/* Optional: Makes the sample page fill the window. */
+html,
+body,
+main {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+>>>>>>> 4dd011dabd4319696f62a6f82d373da61efec8f4
 }
