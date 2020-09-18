@@ -1,6 +1,6 @@
 var searchForm = document.querySelector("#search-form");
 var cityUserInputEl = document.querySelector("#city-input");
-var invalidCity = document.getElementById("#invalid-city");
+var invalidCity = document.getElementById("invalid-city");
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
 
@@ -75,9 +75,11 @@ function getUserInput(event) {
     // grabs the input of the string after the , and checks if the length is not = 2 since the user has to enter in a two-letter state abbreviation. if it is not equal to 2, return an error.
     var check = cityString.substring(cityString.indexOf(", ") + 2);
     if (check.length !== 2) {
+        invalidCity.className = 'invalid-search';
         console.log("error");
         return;
     }
+    invalidCity.className = 'hide';
     city();
 }
 
@@ -107,7 +109,7 @@ function city() {
         .catch(function (error) {
             // Not a valid city
             // ----------------- we could have a text box show up above the search to let the user know they need to enter a valid city
-            invalidCity.classList.remove('hide'); // should remove hide class to show error text p, but it's not working
+            // invalidCity.className = 'invalid-search'; // should remove hide class to show error text p, but it's not working
             console.log("NOT A VALID CITY");
             console.log(error);
         })
