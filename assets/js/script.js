@@ -5,14 +5,14 @@ var cityUserInputEl = document.querySelector("#city-input");
 // create a data structure for variables to clean up code
 // var cityLon;
 // var cityLat;
-// var restaurantOneLon;
-// var restaurantOneLat;
-// var restaurantTwoLon;
-// var restaurantTwoLat;
-// var attractionOneLon;
-// var attractionOneLat;
-// var attractionTwoLon;
-// var attractionTwoLat;
+// var restData.breakfast.lon;
+// var restData.breakfast.lat;
+// var restData.lunch.lon;
+// var restData.lunch.lat;
+// var attractData.eventOne.lon;
+// var attractData.eventOne.lat;
+// var attractData.eventTwo.lon;
+// var attractData.eventTwo.lat;
 var map;
 var cityData = {
                 userInput : {
@@ -172,7 +172,7 @@ function restaurants() {
 
             console.log(arrFiltered);
 
-            // createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat)
+            // createMap(cityLon, cityLat, restData.breakfast.lon, restData.breakfast.lat, restData.lunch.lon, restData.lunch.lat)
             attractions();
         })
         .catch(err => {
@@ -241,8 +241,7 @@ function attractions() {
 // dependent on completion of geocCoding & trip advisory data fetch
 // in the future will take in data structure as parameter
 // assign map data to data structure 
-function createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat,
-    attractionOneLon, attractionOneLat, attractionTwoLon, attractionTwoLat) {
+function createMap() {
     // Create the script tag, set the appropriate attributes
     var script = document.createElement('script');
     script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap';
@@ -255,7 +254,7 @@ function createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaur
         const directionsRenderer = new google.maps.DirectionsRenderer();
 
         // location variable to store lat/lng
-        var location = { lat: cityLat, lng: cityLon };
+        var location = { lat: cityData.cityCoord.lat, lng: cityData.cityCoord.lon };
 
         // create map
         map = new google.maps.Map(document.getElementById("map"), {
@@ -271,20 +270,20 @@ function createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaur
     document.head.appendChild(script);
 
     function calculateAndDisplayRoute(directionsService, directionsRenderer) {
-        restaurantOneLon = restaurantOneLon.toString();
-        restaurantOneLat = restaurantOneLat.toString();
-        restaurantTwoLon = restaurantTwoLon.toString();
-        restaurantTwoLat = restaurantTwoLat.toString();
-        attractionOneLon = attractionOneLon.toString();
-        attractionOneLat = attractionOneLat.toString();
-        attractionTwoLon = attractionTwoLon.toString();
-        attractionTwoLat = attractionTwoLat.toString();
+        restData.breakfast.lon = restData.breakfast.lon.toString();
+        restData.breakfast.lat = restData.breakfast.lat.toString();
+        restData.lunch.lon = restData.lunch.lon.toString();
+        restData.lunch.lat = restData.lunch.lat.toString();
+        attractData.eventOne.lon = attractData.eventOne.lon.toString();
+        attractData.eventOne.lat = attractData.eventOne.lat.toString();
+        attractData.eventTwo.lon = attractData.eventTwo.lon.toString();
+        attractData.eventTwo.lat = attractData.eventTwo.lat.toString();
 
         directionsService.route(
             {
-                origin: restaurantOneLat + ", " + restaurantOneLon,
-                destination: attractionOneLat + ", " + attractionOneLon,
-                waypoints: [{ location: restaurantTwoLat + ", " + restaurantTwoLon }, { location: attractionTwoLat + ", " + attractionTwoLon }],
+                origin: restData.breakfast.lat + ", " + restData.breakfast.lon,
+                destination: attractData.eventOne.lat + ", " + attractData.eventOne.lon,
+                waypoints: [{ location: restData.lunch.lat + ", " + restData.lunch.lon }, { location: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon }],
                 travelMode: google.maps.TravelMode.DRIVING
             },
             (response, status) => {
