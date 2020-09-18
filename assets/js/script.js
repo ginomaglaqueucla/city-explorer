@@ -54,6 +54,7 @@ var attractData = {
                     lon: ""
                 }
                 };
+var cityString = "";
 
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
@@ -78,9 +79,21 @@ function getUserInput(event) {
     searchForm.reset();
 
     console.log(cityData.userInput.searchTerm);
-    city();
 
-    // perform error handling in this function ?
+    // perform error handling
+    cityString = cityData.userInput.searchTerm
+    cityString = " " + cityString.trim();
+    cityString = cityString.replace(" ", "+");
+
+    console.log(cityString.indexOf(", "));
+
+    // we may need a better way error handle city inputs
+    var check = cityString.substring(cityString.indexOf(", ") + 2);
+    if (check.length !== 2) {
+        console.log("error");
+        return;
+    }
+    city();
 }
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
@@ -95,17 +108,6 @@ function getUserInput(event) {
 // in the future fetched data will be a part of the data structure
 // call trip advisory api functions
 function city() {
-    var cityString = cityData.userInput.searchTerm
-    cityString = " " + cityString.trim();
-    cityString = cityString.replace(" ", "+");
-
-    console.log(cityString.indexOf(", "));
-
-    var check = cityString.substring(cityString.indexOf(", ") + 2);
-    if (check.length !== 2) {
-        console.log("error");
-        return;
-    }
 
     fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${cityString}&key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg`)
         .then(function (response) {
