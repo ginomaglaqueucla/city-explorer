@@ -3,16 +3,7 @@ var cityUserInputEl = document.querySelector("#city-input");
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
 // create a data structure for variables to clean up code
-// var cityLon;
-// var cityLat;
-// var restData.breakfast.lon;
-// var restData.breakfast.lat;
-// var restData.lunch.lon;
-// var restData.lunch.lat;
-// var attractData.eventOne.lon;
-// var attractData.eventOne.lat;
-// var attractData.eventTwo.lon;
-// var attractData.eventTwo.lat;
+
 var map;
 var cityData = {
                 userInput : {
@@ -123,6 +114,9 @@ function city() {
             restaurants();
         })
         .catch(function (error) {
+            // Not a valid city
+            // any way to have the border of the input field red ?
+            console.log("NOT A VALID CITY");
             console.log(error);
         })
 }
@@ -146,6 +140,7 @@ function restaurants() {
             "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
         }
     })
+
         .then(response => {
             return response.json();
         })
@@ -229,8 +224,7 @@ function attractions() {
 
             console.log(arrFiltered2);
 
-            createMap(cityData.cityCoord.lon, cityData.cityCoord.lat, restData.breakfast.lon, restData.breakfast.lat, restData.lunch.lon, restData.lunch.lat,
-                attractData.eventOne.lon, attractData.eventOne.lat, attractData.eventTwo.lon, attractData.eventTwo.lat);
+            createMap();
         })
         .catch(err => {
             console.log(err);
