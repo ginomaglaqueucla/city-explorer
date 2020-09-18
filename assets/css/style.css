@@ -67,3 +67,10 @@
 .map-area {
     border-radius: 10px;
 }
+
+#map {
+    height: 50%;
+    width: 50%;
+    padding: 0;
+    margin: 0;
+}

@@ -1,46 +1,131 @@
-var userFormEl = document.querySelector("#zip-form");
-var zipCodeInputEl = document.getElementById("zip-code");
-var learnMoreContainer = document.getElementById("learn-more-container");
-var localNewsContainer = document.getElementById("local-news-container");
+var cityLon;
+var cityLat;
+var restaurantOneLon;
+var restaurantOneLat;
+var restaurantTwoLon;
+var restaurantTwoLat;
+var attractionOneLon;
+var attractionOneLat;
+var attractionTwoLon;
+var attractionTwoLat;
 var map;
-var marker;
-var placeName;
-var lat;
-var lon;
-var articleUrl;
-var newsUrl;
 
-var formSubmitHandler = function (event) {
-    event.preventDefault();
+function city() {
+    var cityInput = "Beverly Hills, CA";
+    cityInput = " " + cityInput.trim();
+    cityInput = cityInput.replace(" ", "+");
 
-    var zip = zipCodeInputEl.value.trim();
-    zipCode(zip);
-}
+    console.log(cityInput.indexOf(", "));
 
-function zipCode(zip) {
-    var apiUrl = "https://api.zippopotam.us/us/" + zip;
+    var check = cityInput.substring(cityInput.indexOf(", ") + 2);
+    if (check.length !== 2) {
+        console.log("error");
+    }
 
-    fetch(apiUrl)
+    fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${cityInput}&key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg`)
         .then(function (response) {
             return response.json();
         })
-        .then(function (response) {
-            console.log(response);
-            console.log(response.places[0]['place name']);
+        .then(function (data) {
+            cityLon = data.results[0].geometry.location.lng;
+            cityLon = parseFloat(cityLon);
+            cityLat = data.results[0].geometry.location.lat;
+            cityLat = parseFloat(cityLat);
+            console.log(cityLon, cityLat);
 
-            placeName = response.places[0]['place name'];
-            lat = response.places[0].latitude;
-            lat = parseFloat(lat);
-            lon = response.places[0].longitude;
-            lon = parseFloat(lon);
-
-            console.log(lat, lon);
-
-            createMap(placeName, lat, lon)
+            restaurants(cityLon, cityLat);
         })
+        .catch(function (error) {
+            console.log(error);
+        })
+
 }
 
-function createMap(placeName, placeLat, placeLon) {
+function restaurants(cityLon, cityLat) {
+    fetch("https://tripadvisor1.p.rapidapi.com/restaurants/list-by-latlng?limit=30&currency=USD&distance=2&lunit=km&lang=en_US&latitude=" + cityLat + "&longitude=" + cityLon, {
+        "method": "GET",
+        "headers": {
+            "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
+            "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
+        }
+    })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            restaurantOneLon = data.data[0].longitude;
+            restaurantOneLat = data.data[0].latitude;
+            restaurantTwoLon = data.data[1].longitude;
+            restaurantTwoLat = data.data[1].latitude;
+
+            var key = 'American';
+            var arrFiltered = [];
+
+            for (var i = 0; i < data.data.length; i++) {
+                if (data.data[i].name) {
+                    for (var j = 0; j < data.data[i].cuisine.length; j++) {
+                        if (data.data[i].cuisine[j].name === key) {
+                            arrFiltered.push(data.data[i]);
+                        }
+                    }
+                }
+            }
+
+            console.log(arrFiltered);
+
+            attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
+
+function attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat) {
+    fetch("https://tripadvisor1.p.rapidapi.com/attractions/list-by-latlng?lunit=km&currency=USD&limit=30&distance=5&lang=en_US&longitude=" + cityLon + "&latitude=" + cityLat, {
+        "method": "GET",
+        "headers": {
+            "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
+            "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
+        }
+    })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            attractionOneLon = data.data[0].longitude;
+            attractionOneLat = data.data[0].latitude;
+            attractionTwoLon = data.data[1].longitude;
+            attractionTwoLat = data.data[1].latitude;
+
+            var key = 'Nature & Parks';
+            var arrFiltered2 = [];
+
+            for (var i = 0; i < data.data.length; i++) {
+                if (data.data[i]) {
+                    for (var j = 0; j < data.data[i].subcategory.length; j++) {
+                        // for (var k = 0; k < key.length; k++) {
+                        //  if(data.data[i].subcategory[j].name === key[k];
+                        //  arrFiltered2.push(data.data[i]);
+                        // }
+                        if (data.data[i].subcategory[j].name === key) {
+                            arrFiltered2.push(data.data[i]);
+                        }
+                    }
+                }
+            }
+
+            console.log(arrFiltered2);
+
+            createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat, attractionOneLon, attractionOneLat, attractionTwoLon, attractionTwoLat);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
+
+function createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat, attractionOneLon, attractionOneLat, attractionTwoLon, attractionTwoLat) {
     // Create the script tag, set the appropriate attributes
     var script = document.createElement('script');
     script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap';
@@ -49,10 +134,11 @@ function createMap(placeName, placeLat, placeLon) {
     // Attach your callback function to the `window` object
 
     window.initMap = function () {
-        // JS API is loaded and available
+        const directionsService = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer();
 
         // location variable to store lat/lng
-        var location = { lat: placeLat, lng: placeLon };
+        var location = { lat: cityLat, lng: cityLon };
 
         // create map
         map = new google.maps.Map(document.getElementById("map"), {
@@ -60,77 +146,39 @@ function createMap(placeName, placeLat, placeLon) {
             zoom: 12
         });
 
-        // marker
-        marker = new google.maps.Marker({ position: location, map: map, label: placeName });
-
+        directionsRenderer.setMap(map);
+        calculateAndDisplayRoute(directionsService, directionsRenderer);
     };
 
     // Append the 'script' element to 'head'
     document.head.appendChild(script);
 
-    wiki(placeName);
-}
+    function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+        restaurantOneLon = restaurantOneLon.toString();
+        restaurantOneLat = restaurantOneLat.toString();
+        restaurantTwoLon = restaurantTwoLon.toString();
+        restaurantTwoLat = restaurantTwoLat.toString();
+        attractionOneLon = attractionOneLon.toString();
+        attractionOneLat = attractionOneLat.toString();
+        attractionTwoLon = attractionTwoLon.toString();
+        attractionTwoLat = attractionTwoLat.toString();
 
-function wiki(placeName) {
-    var url = "https://en.wikipedia.org/w/api.php";
-
-    var params = {
-        action: "query",
-        list: "search",
-        srsearch: placeName,
-        format: "json",
-    };
-
-    url = url + "?origin=*";
-    Object.keys(params).forEach(function (key) { url += "&" + key + "=" + params[key]; });
-    console.log(url);
-
-    fetch(url)
-        .then(function (response) { return response.json(); })
-        .then(function (response) {
-            console.log(response.query.search[0]);
-            var pageId = response.query.search[0].pageid;
-            console.log("https://en.wikipedia.org/wiki?curid=" + pageId);
-            articleUrl = "https://en.wikipedia.org/wiki?curid=" + pageId;
-        })
-        .catch(function (error) { console.log(error); });
-
-    // clears out old buttons
-    learnMoreContainer.innerHTML = "";
-
-    var article = document.createElement("BUTTON");
-    article.innerHTML = "Learn More";
-    article.classList = "learn-more-btn";
-    article.onclick = function () {
-        window.open(articleUrl);
+        directionsService.route(
+            {
+                origin: restaurantOneLat + ", " + restaurantOneLon,
+                destination: attractionOneLat + ", " + attractionOneLon,
+                waypoints: [{ location: restaurantTwoLat + ", " + restaurantTwoLon }, { location: attractionTwoLat + ", " + attractionTwoLon }],
+                travelMode: google.maps.TravelMode.DRIVING
+            },
+            (response, status) => {
+                if (status === "OK") {
+                    directionsRenderer.setDirections(response);
+                } else {
+                    window.alert("Directions request failed due to " + status);
+                }
+            }
+        );
     }
-    learnMoreContainer.appendChild(article);
-
-    news(placeName);
 }
 
-function news(placeName) {
-    var apiUrl = 'https://gnews.io/api/v3/search?q=' + placeName + '&token=150db8737914007f6a69392f228ed36e';
-
-    fetch(apiUrl)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            console.log(data);
-            newsUrl = data.articles[0].url;
-        });
-
-    // clears out old buttons
-    localNewsContainer.innerHTML = "";
-
-    var news = document.createElement("button");
-    news.innerHTML = "Local News";
-    news.classList = "local-news-btn";
-    news.onclick = function () {
-        window.open(newsUrl);
-    }
-    localNewsContainer.appendChild(news);
-}
-
-userFormEl.addEventListener("submit", formSubmitHandler);
+city();
