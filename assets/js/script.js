@@ -3,16 +3,16 @@ var cityUserInputEl = document.querySelector("#city-input");
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
 // create a data structure for variables to clean up code
-var cityLon;
-var cityLat;
-var restaurantOneLon;
-var restaurantOneLat;
-var restaurantTwoLon;
-var restaurantTwoLat;
-var attractionOneLon;
-var attractionOneLat;
-var attractionTwoLon;
-var attractionTwoLat;
+// var cityLon;
+// var cityLat;
+// var restaurantOneLon;
+// var restaurantOneLat;
+// var restaurantTwoLon;
+// var restaurantTwoLat;
+// var attractionOneLon;
+// var attractionOneLat;
+// var attractionTwoLon;
+// var attractionTwoLat;
 var map;
 var cityData = {
                 userInput : {
@@ -173,7 +173,7 @@ function restaurants() {
             console.log(arrFiltered);
 
             // createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat)
-            // attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat);
+            attractions();
         })
         .catch(err => {
             console.log(err);
@@ -189,9 +189,9 @@ function restaurants() {
 // in the future data will be assigned to data structure
 // in the future perhaps combine restaurants and attractions functions to keep code DRY
 // in the future function will take in attraction filter (if possible)
-function attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat) {
+function attractions() {
     fetch("https://tripadvisor1.p.rapidapi.com/attractions/list-by-latlng?lunit=km&currency=USD&limit=30&distance=5&lang=en_US&longitude="
-        + cityLon + "&latitude=" + cityLat, {
+        + cityData.cityCoord.lon + "&latitude=" + cityData.cityCoord.lat, {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
@@ -203,10 +203,10 @@ function attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, resta
         })
         .then(data => {
             console.log(data);
-            attractionOneLon = data.data[0].longitude;
-            attractionOneLat = data.data[0].latitude;
-            attractionTwoLon = data.data[1].longitude;
-            attractionTwoLat = data.data[1].latitude;
+            attractData.eventOne.lon = data.data[0].longitude;
+            attractData.eventOne.lat = data.data[0].latitude;
+            attractData.eventTwo.lon = data.data[1].longitude;
+            attractData.eventTwo.lat = data.data[1].latitude;
 
             var key = 'Nature & Parks';
             var arrFiltered2 = [];
@@ -227,8 +227,8 @@ function attractions(cityLon, cityLat, restaurantOneLon, restaurantOneLat, resta
 
             console.log(arrFiltered2);
 
-            createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaurantTwoLon, restaurantTwoLat,
-                attractionOneLon, attractionOneLat, attractionTwoLon, attractionTwoLat);
+            createMap(cityData.cityCoord.lon, cityData.cityCoord.lat, restData.breakfast.lon, restData.breakfast.lat, restData.lunch.lon, restData.lunch.lat,
+                attractData.eventOne.lon, attractData.eventOne.lat, attractData.eventTwo.lon, attractData.eventTwo.lat);
         })
         .catch(err => {
             console.log(err);
