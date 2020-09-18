@@ -1,3 +1,5 @@
+var searchForm = document.querySelector("#search-form");
+var cityUserInputEl = document.querySelector("#city-input");
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
 // create a data structure for variables to clean up code
@@ -12,6 +14,46 @@ var attractionOneLat;
 var attractionTwoLon;
 var attractionTwoLat;
 var map;
+var cityData = {
+            userInput : {
+                searchTerm: "",
+                restFilter:"",
+                attractFilter:""
+            },
+            cityCoord : {
+                lat: "",
+                lon: ""
+            },
+            restData : {
+                breakfast : {
+                    restName: "",
+                    lat: "",
+                    lon: ""
+                },
+                lunch : {
+                    restName: "",
+                    lat: "",
+                    lon: ""
+                },
+                dinner : {
+                    restName: "",
+                    lat: "",
+                    lon: ""
+                }
+            },
+            attractData : {
+                eventOne : {
+                    eventName: "",
+                    lat: "",
+                    lon: ""
+                },
+                eventTwo : {
+                    eventName: "",
+                    lat: "",
+                    lon: ""
+                }
+            }
+};
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
@@ -24,6 +66,19 @@ var map;
 // call function that converts city, state data to lat/lon
 // ensure function has error handling
 // handles the event listener for submit click
+function getUserInput(event) {
+    event.preventDefault();
+    
+    // grab user input
+    cityData.userInput.searchTerm = cityUserInputEl.value;
+
+    // reset input field
+    searchForm.reset();
+
+    console.log(cityData.userInput.searchTerm);
+
+    // perform error handling in this function ?
+}
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
 // var input = document.getElementById("input").value;
@@ -275,5 +330,5 @@ function createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaur
 // event listener for submit click (user input)
 // event listener for favorites click
 // event listener for search history click
-
+searchForm.addEventListener("submit", getUserInput)
 city();
