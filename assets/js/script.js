@@ -1,54 +1,52 @@
 var searchForm = document.querySelector("#search-form");
 var cityUserInputEl = document.querySelector("#city-input");
+var invalidCity = document.getElementById("#invalid-city");
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
-// create a data structure for variables to clean up code
 
+// created global variables with object structure to organize each api call
 var map;
 var cityData = {
-                userInput : {
-                    searchTerm: "",
-                    restFilter:"",
-                    attractFilter:""
-                },
-                cityCoord : {
-                    lat: "",
-                    lon: ""
-                }
-                };
-var restData =  {
-                breakfast : {
-                    restName: "",
-                    lat: "",
-                    lon: ""
-                },
-                lunch : {
-                    restName: "",
-                    lat: "",
-                    lon: ""
-                },
-                dinner : {
-                    restName: "",
-                    lat: "",
-                    lon: ""
-                }
-                };
+    userInput: {
+        searchTerm: "",
+        restFilter: "",
+        attractFilter: ""
+    },
+    cityCoord: {
+        lat: "",
+        lon: ""
+    }
+};
+var restData = {
+    breakfast: {
+        restName: "",
+        lat: "",
+        lon: ""
+    },
+    lunch: {
+        restName: "",
+        lat: "",
+        lon: ""
+    },
+    dinner: {
+        restName: "",
+        lat: "",
+        lon: ""
+    }
+};
 var attractData = {
-                eventOne : {
-                    eventName: "",
-                    lat: "",
-                    lon: ""
-                },
-                eventTwo : {
-                    eventName: "",
-                    lat: "",
-                    lon: ""
-                }
-                };
+    eventOne: {
+        eventName: "",
+        lat: "",
+        lon: ""
+    },
+    eventTwo: {
+        eventName: "",
+        lat: "",
+        lon: ""
+    }
+};
 var cityString = "";
-
-
-// ------------------------------------------------------------------------------------------------------------------------------------- //
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ----- Grab User Input ----- //
@@ -62,23 +60,19 @@ var cityString = "";
 // handles the event listener for submit click
 function getUserInput(event) {
     event.preventDefault();
-    
+
     // grab user input
     cityData.userInput.searchTerm = cityUserInputEl.value;
 
     // reset input field
     searchForm.reset();
 
-    console.log(cityData.userInput.searchTerm);
-
     // perform error handling
     cityString = cityData.userInput.searchTerm
     cityString = " " + cityString.trim();
     cityString = cityString.replace(" ", "+");
 
-    console.log(cityString.indexOf(", "));
-
-    // we may need a better way error handle city inputs
+    // grabs the input of the string after the , and checks if the length is not = 2 since the user has to enter in a two-letter state abbreviation. if it is not equal to 2, return an error.
     var check = cityString.substring(cityString.indexOf(", ") + 2);
     if (check.length !== 2) {
         console.log("error");
@@ -86,11 +80,6 @@ function getUserInput(event) {
     }
     city();
 }
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-
-// var input = document.getElementById("input").value;
-
-
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ----- fetch Google geoCoding ----- //
@@ -100,10 +89,12 @@ function getUserInput(event) {
 // call trip advisory api functions
 function city() {
 
+    // google geocode api to search for user input
     fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${cityString}&key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg`)
         .then(function (response) {
             return response.json();
         })
+        //  assigns city coords to cityData variable
         .then(function (data) {
             cityData.cityCoord.lon = data.results[0].geometry.location.lng;
             cityData.cityCoord.lon = parseFloat(cityData.cityCoord.lon);
@@ -115,7 +106,8 @@ function city() {
         })
         .catch(function (error) {
             // Not a valid city
-            // any way to have the border of the input field red ?
+            // ----------------- we could have a text box show up above the search to let the user know they need to enter a valid city
+            invalidCity.classList.remove('hide'); // should remove hide class to show error text p, but it's not working
             console.log("NOT A VALID CITY");
             console.log(error);
         })
@@ -146,8 +138,7 @@ function restaurants() {
         })
         .then(data => {
             console.log(data);
-            // console.log(data.data[0]);
-            // console.log(data.data[1])
+            // stores restaurant data
             restData.breakfast.lon = data.data[0].longitude;
             restData.breakfast.lat = data.data[0].latitude;
             restData.lunch.lon = data.data[1].longitude;
@@ -157,6 +148,7 @@ function restaurants() {
             var key = 'American';
             var arrFiltered = [];
 
+            // loops through cuisine data to find filter
             for (var i = 0; i < data.data.length; i++) {
                 if (data.data[i].name) {
                     for (var j = 0; j < data.data[i].cuisine.length; j++) {
@@ -168,8 +160,6 @@ function restaurants() {
             }
 
             console.log(arrFiltered);
-
-            // createMap(cityLon, cityLat, restData.breakfast.lon, restData.breakfast.lat, restData.lunch.lon, restData.lunch.lat)
             attractions();
         })
         .catch(err => {
@@ -200,6 +190,7 @@ function attractions() {
         })
         .then(data => {
             console.log(data);
+            // stores attraction data
             attractData.eventOne.lon = data.data[0].longitude;
             attractData.eventOne.lat = data.data[0].latitude;
             attractData.eventTwo.lon = data.data[1].longitude;
@@ -208,13 +199,10 @@ function attractions() {
             var key = 'Nature & Parks';
             var arrFiltered2 = [];
 
+            // loops through filtered subcategory list
             for (var i = 0; i < data.data.length; i++) {
                 if (data.data[i]) {
                     for (var j = 0; j < data.data[i].subcategory.length; j++) {
-                        // for (var k = 0; k < key.length; k++) {
-                        //  if(data.data[i].subcategory[j].name === key[k];
-                        //  arrFiltered2.push(data.data[i]);
-                        // }
                         if (data.data[i].subcategory[j].name === key) {
                             arrFiltered2.push(data.data[i]);
                         }
@@ -223,7 +211,6 @@ function attractions() {
             }
 
             console.log(arrFiltered2);
-
             createMap();
         })
         .catch(err => {
@@ -243,8 +230,7 @@ function createMap() {
     script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap';
     script.defer = true;
 
-    // Attach your callback function to the `window` object
-
+    // initates function to create google map
     window.initMap = function () {
         const directionsService = new google.maps.DirectionsService();
         const directionsRenderer = new google.maps.DirectionsRenderer();
@@ -265,6 +251,7 @@ function createMap() {
     // Append the 'script' element to 'head'
     document.head.appendChild(script);
 
+    // calculates and displays route on google maps
     function calculateAndDisplayRoute(directionsService, directionsRenderer) {
         restData.breakfast.lon = restData.breakfast.lon.toString();
         restData.breakfast.lat = restData.breakfast.lat.toString();
@@ -331,4 +318,3 @@ function createMap() {
 // event listener for favorites click
 // event listener for search history click
 searchForm.addEventListener("submit", getUserInput)
-// city();
