@@ -222,6 +222,7 @@ function attractions() {
 
             console.log(arrFiltered2);
             createMap();
+            displayItinerary();
         })
         .catch(err => {
             console.log(err);
@@ -288,6 +289,7 @@ function createMap() {
             }
         );
     }
+
 }
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
@@ -299,9 +301,6 @@ function createMap() {
 // itinerary will be save to local storage "search history"
 // call display Itinerary function
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-function generateItinerary() {
-
-}
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ load page  ------ //
@@ -321,34 +320,48 @@ function generateItinerary() {
 // create algorithm logic to identify if this function was called from a favorite click, search click, or submit click
 // in the future error handle to exclude already generated restaurants/attractions ?
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-function displayItinerary(city, time, place) {
+function displayItinerary() {
+
+    var placeArray = [restData.restOne.restName, attractData.eventOne.eventName, restData.restTwo.restName, attractData.eventTwo.eventName];
+    var urlArray = [restData.restOne.url, attractData.eventOne.url, restData.restTwo.url, attractData.eventTwo.url];
+    var wayPointArray = ["A", "B", "C", "D"];
+
     // clear old data
     columnTwoEl.textContent = "";
+
     // create Foundation card element
     var cardEl = document.createElement("div");
     cardEl.classList = "card itinerary";
     cardEl.setAttribute("id", "itinerary");
-    // create element for card title
+
+    // create element for card title (city name)
     var titleEl = document.createElement("div");
-    titleEl.textContent = "Itinerary for " + city;
+    titleEl.textContent = "Itinerary for " + cityData.userInput.searchTerm;
     titleEl.classList = "card-divider";
     titleEl.setAttribute("id", "itinerary-title");
     cardEl.appendChild(titleEl);
+
     // create element for itinerary section
     var listEl = document.createElement("div");
     listEl.classList = "card-section";
     listEl.setAttribute("id", "itinerary-list");
-    // for loop ? create element for each location
-    // need time, place name, place website
-    var placeEl = document.createElement("a");
-    placeEl.classList = "button event";
-    placeEl.setAttribute("href", "https://www.hollywoodbowl.com/");
-    placeEl.textContent = time + " " + place;
-    listEl.appendChild(placeEl);
-    cardEl.appendChild(listEl);
-    columnTwoEl.appendChild(cardEl);
-    saveHistory(city, time, place);
+
+    for (var i = 0; i < 4; i++) {
+        // create element for each place
+        var placeEl = document.createElement("a");
+        placeEl.classList = "button event";
+        placeEl.setAttribute("href", urlArray[i]);
+        placeEl.setAttribute("target", "_blank");
+        placeEl.textContent = wayPointArray[i] +": " + placeArray[i];
+        listEl.appendChild(placeEl);
+
+        cardEl.appendChild(listEl);
+        columnTwoEl.appendChild(cardEl);
+    }
+
+    // saveHistory(city, time, place);
 }
+
 function saveHistory(saveCity, saveTime, savePlace) {
     console.log(saveCity, saveTime, savePlace);
     var save = {city: saveCity, time: saveTime, place: savePlace};
