@@ -71,7 +71,7 @@ function getUserInput(event) {
     cityString = cityData.userInput.searchTerm
     cityString = " " + cityString.trim();
     cityString = cityString.replace(" ", "+");
-
+  
     // grabs the input of the string after the , and checks if the length is not = 2 since the user has to enter in a two-letter state abbreviation. if it is not equal to 2, return an error.
     var check = cityString.substring(cityString.indexOf(", ") + 2);
     if (check.length !== 2) {
@@ -268,6 +268,7 @@ function createMap() {
         restData.restOne.lat = restData.restOne.lat.toString();
         restData.restTwo.lon = restData.restTwo.lon.toString();
         restData.restTwo.lat = restData.restTwo.lat.toString();
+
         attractData.eventOne.lon = attractData.eventOne.lon.toString();
         attractData.eventOne.lat = attractData.eventOne.lat.toString();
         attractData.eventTwo.lon = attractData.eventTwo.lon.toString();
@@ -278,6 +279,7 @@ function createMap() {
                 origin: restData.restOne.lat + ", " + restData.restOne.lon,
                 destination: attractData.eventOne.lat + ", " + attractData.eventOne.lon,
                 waypoints: [{ location: restData.restTwo.lat + ", " + restData.restTwo.lon }, { location: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon }],
+
                 travelMode: google.maps.TravelMode.DRIVING
             },
             (response, status) => {
@@ -301,7 +303,6 @@ function createMap() {
 // itinerary will be save to local storage "search history"
 // call display Itinerary function
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ load page  ------ //
 // this function will load the static homepage
