@@ -19,32 +19,31 @@ var cityData = {
     }
 };
 var restData = {
-    breakfast: {
+    restOne: {
         restName: "",
         lat: "",
-        lon: ""
+        lon: "",
+        url: ""
     },
-    lunch: {
+    restTwo: {
         restName: "",
         lat: "",
-        lon: ""
-    },
-    dinner: {
-        restName: "",
-        lat: "",
-        lon: ""
+        lon: "",
+        url: ""
     }
 };
 var attractData = {
     eventOne: {
         eventName: "",
         lat: "",
-        lon: ""
+        lon: "",
+        url: ""
     },
     eventTwo: {
         eventName: "",
         lat: "",
-        lon: ""
+        lon: "",
+        url: ""
     }
 };
 var cityString = "";
@@ -125,7 +124,7 @@ function city() {
 // in the future data will be assigned to data structure
 // in the future use random number generator choose 3 random restaurants
 // in the future function will take in dietary filter data parameter
-// need to figure out algorithm for breakfast/lunch/dinner sorting
+// need to figure out algorithm for restOne/restTwo/dinner sorting
 function restaurants() {
     fetch("https://tripadvisor1.p.rapidapi.com/restaurants/list-by-latlng?limit=30&currency=USD&distance=2&lunit=km&lang=en_US&latitude="
         + cityData.cityCoord.lat + "&longitude=" + cityData.cityCoord.lon, {
@@ -142,10 +141,14 @@ function restaurants() {
         .then(data => {
             console.log(data);
             // stores restaurant data
-            restData.breakfast.lon = data.data[0].longitude;
-            restData.breakfast.lat = data.data[0].latitude;
-            restData.lunch.lon = data.data[1].longitude;
-            restData.lunch.lat = data.data[1].latitude;
+            restData.restOne.lon = data.data[0].longitude;
+            restData.restOne.lat = data.data[0].latitude;
+            restData.restOne.restName = data.data[0].name;
+            restData.restOne.url = data.data[0].web_url;
+            restData.restTwo.lon = data.data[1].longitude;
+            restData.restTwo.lat = data.data[1].latitude;
+            restData.restTwo.restName = data.data[1].name;
+            restData.restTwo.url = data.data[1].web_url;
 
             // hard coded for now
             var key = 'American';
@@ -196,8 +199,12 @@ function attractions() {
             // stores attraction data
             attractData.eventOne.lon = data.data[0].longitude;
             attractData.eventOne.lat = data.data[0].latitude;
+            attractData.eventOne.eventName = data.data[0].name;
+            attractData.eventOne.url = data.data[0].web_url;
             attractData.eventTwo.lon = data.data[1].longitude;
             attractData.eventTwo.lat = data.data[1].latitude;
+            attractData.eventTwo.eventName = data.data[1].name;
+            attractData.eventTwo.url = data.data[1].web_url;
 
             var key = 'Nature & Parks';
             var arrFiltered2 = [];
@@ -256,10 +263,10 @@ function createMap() {
 
     // calculates and displays route on google maps
     function calculateAndDisplayRoute(directionsService, directionsRenderer) {
-        restData.breakfast.lon = restData.breakfast.lon.toString();
-        restData.breakfast.lat = restData.breakfast.lat.toString();
-        restData.lunch.lon = restData.lunch.lon.toString();
-        restData.lunch.lat = restData.lunch.lat.toString();
+        restData.restOne.lon = restData.restOne.lon.toString();
+        restData.restOne.lat = restData.restOne.lat.toString();
+        restData.restTwo.lon = restData.restTwo.lon.toString();
+        restData.restTwo.lat = restData.restTwo.lat.toString();
         attractData.eventOne.lon = attractData.eventOne.lon.toString();
         attractData.eventOne.lat = attractData.eventOne.lat.toString();
         attractData.eventTwo.lon = attractData.eventTwo.lon.toString();
@@ -267,9 +274,9 @@ function createMap() {
 
         directionsService.route(
             {
-                origin: restData.breakfast.lat + ", " + restData.breakfast.lon,
+                origin: restData.restOne.lat + ", " + restData.restOne.lon,
                 destination: attractData.eventOne.lat + ", " + attractData.eventOne.lon,
-                waypoints: [{ location: restData.lunch.lat + ", " + restData.lunch.lon }, { location: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon }],
+                waypoints: [{ location: restData.restTwo.lat + ", " + restData.restTwo.lon }, { location: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon }],
                 travelMode: google.maps.TravelMode.DRIVING
             },
             (response, status) => {
@@ -288,11 +295,13 @@ function createMap() {
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ generate Itinerary  ------ //
 // this function will use recently fetched data that is contained in data structure and create itinerary
-// itinerary includes breakfast -> attraction -> lunch -> attraction -> dinner
+// itinerary includes restOne -> attraction -> restTwo -> attraction -> dinner
 // itinerary will be save to local storage "search history"
 // call display Itinerary function
 // ------------------------------------------------------------------------------------------------------------------------------------- //
+function generateItinerary() {
 
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ load page  ------ //
