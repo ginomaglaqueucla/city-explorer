@@ -1,6 +1,7 @@
 var searchForm = document.querySelector("#search-form");
 var cityUserInputEl = document.querySelector("#city-input");
 var invalidCity = document.getElementById("invalid-city");
+var columnTwoEl = document.querySelector("#column-two");
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
 
@@ -18,32 +19,31 @@ var cityData = {
     }
 };
 var restData = {
-    breakfast: {
+    restOne: {
         restName: "",
         lat: "",
-        lon: ""
+        lon: "",
+        url: ""
     },
-    lunch: {
+    restTwo: {
         restName: "",
         lat: "",
-        lon: ""
-    },
-    dinner: {
-        restName: "",
-        lat: "",
-        lon: ""
+        lon: "",
+        url: ""
     }
 };
 var attractData = {
     eventOne: {
         eventName: "",
         lat: "",
-        lon: ""
+        lon: "",
+        url: ""
     },
     eventTwo: {
         eventName: "",
         lat: "",
-        lon: ""
+        lon: "",
+        url: ""
     }
 };
 var cityString = "";
@@ -71,7 +71,7 @@ function getUserInput(event) {
     cityString = cityData.userInput.searchTerm
     cityString = " " + cityString.trim();
     cityString = cityString.replace(" ", "+");
-
+  
     // grabs the input of the string after the , and checks if the length is not = 2 since the user has to enter in a two-letter state abbreviation. if it is not equal to 2, return an error.
     var check = cityString.substring(cityString.indexOf(", ") + 2);
     if (check.length !== 2) {
@@ -124,7 +124,7 @@ function city() {
 // in the future data will be assigned to data structure
 // in the future use random number generator choose 3 random restaurants
 // in the future function will take in dietary filter data parameter
-// need to figure out algorithm for breakfast/lunch/dinner sorting
+// need to figure out algorithm for restOne/restTwo/dinner sorting
 function restaurants() {
     fetch("https://tripadvisor1.p.rapidapi.com/restaurants/list-by-latlng?limit=30&currency=USD&distance=2&lunit=km&lang=en_US&latitude="
         + cityData.cityCoord.lat + "&longitude=" + cityData.cityCoord.lon, {
@@ -141,10 +141,14 @@ function restaurants() {
         .then(data => {
             console.log(data);
             // stores restaurant data
-            restData.breakfast.lon = data.data[0].longitude;
-            restData.breakfast.lat = data.data[0].latitude;
-            restData.lunch.lon = data.data[1].longitude;
-            restData.lunch.lat = data.data[1].latitude;
+            restData.restOne.lon = data.data[0].longitude;
+            restData.restOne.lat = data.data[0].latitude;
+            restData.restOne.restName = data.data[0].name;
+            restData.restOne.url = data.data[0].web_url;
+            restData.restTwo.lon = data.data[1].longitude;
+            restData.restTwo.lat = data.data[1].latitude;
+            restData.restTwo.restName = data.data[1].name;
+            restData.restTwo.url = data.data[1].web_url;
 
             // hard coded for now
             var key = 'American';
@@ -195,8 +199,12 @@ function attractions() {
             // stores attraction data
             attractData.eventOne.lon = data.data[0].longitude;
             attractData.eventOne.lat = data.data[0].latitude;
+            attractData.eventOne.eventName = data.data[0].name;
+            attractData.eventOne.url = data.data[0].web_url;
             attractData.eventTwo.lon = data.data[1].longitude;
             attractData.eventTwo.lat = data.data[1].latitude;
+            attractData.eventTwo.eventName = data.data[1].name;
+            attractData.eventTwo.url = data.data[1].web_url;
 
             var key = 'Nature & Parks';
             var arrFiltered2 = [];
@@ -214,6 +222,7 @@ function attractions() {
 
             console.log(arrFiltered2);
             createMap();
+            displayItinerary();
         })
         .catch(err => {
             console.log(err);
@@ -255,10 +264,11 @@ function createMap() {
 
     // calculates and displays route on google maps
     function calculateAndDisplayRoute(directionsService, directionsRenderer) {
-        restData.breakfast.lon = restData.breakfast.lon.toString();
-        restData.breakfast.lat = restData.breakfast.lat.toString();
-        restData.lunch.lon = restData.lunch.lon.toString();
-        restData.lunch.lat = restData.lunch.lat.toString();
+        restData.restOne.lon = restData.restOne.lon.toString();
+        restData.restOne.lat = restData.restOne.lat.toString();
+        restData.restTwo.lon = restData.restTwo.lon.toString();
+        restData.restTwo.lat = restData.restTwo.lat.toString();
+
         attractData.eventOne.lon = attractData.eventOne.lon.toString();
         attractData.eventOne.lat = attractData.eventOne.lat.toString();
         attractData.eventTwo.lon = attractData.eventTwo.lon.toString();
@@ -266,9 +276,10 @@ function createMap() {
 
         directionsService.route(
             {
-                origin: restData.breakfast.lat + ", " + restData.breakfast.lon,
+                origin: restData.restOne.lat + ", " + restData.restOne.lon,
                 destination: attractData.eventOne.lat + ", " + attractData.eventOne.lon,
-                waypoints: [{ location: restData.lunch.lat + ", " + restData.lunch.lon }, { location: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon }],
+                waypoints: [{ location: restData.restTwo.lat + ", " + restData.restTwo.lon }, { location: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon }],
+
                 travelMode: google.maps.TravelMode.DRIVING
             },
             (response, status) => {
@@ -280,6 +291,7 @@ function createMap() {
             }
         );
     }
+
 }
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
@@ -287,12 +299,10 @@ function createMap() {
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ generate Itinerary  ------ //
 // this function will use recently fetched data that is contained in data structure and create itinerary
-// itinerary includes breakfast -> attraction -> lunch -> attraction -> dinner
+// itinerary includes restOne -> attraction -> restTwo -> attraction -> dinner
 // itinerary will be save to local storage "search history"
 // call display Itinerary function
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-
-
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ load page  ------ //
 // this function will load the static homepage
@@ -311,7 +321,54 @@ function createMap() {
 // create algorithm logic to identify if this function was called from a favorite click, search click, or submit click
 // in the future error handle to exclude already generated restaurants/attractions ?
 // ------------------------------------------------------------------------------------------------------------------------------------- //
+function displayItinerary() {
 
+    var placeArray = [restData.restOne.restName, attractData.eventOne.eventName, restData.restTwo.restName, attractData.eventTwo.eventName];
+    var urlArray = [restData.restOne.url, attractData.eventOne.url, restData.restTwo.url, attractData.eventTwo.url];
+    var wayPointArray = ["A", "B", "C", "D"];
+
+    // clear old data
+    columnTwoEl.textContent = "";
+
+    // create Foundation card element
+    var cardEl = document.createElement("div");
+    cardEl.classList = "card itinerary";
+    cardEl.setAttribute("id", "itinerary");
+
+    // create element for card title (city name)
+    var titleEl = document.createElement("div");
+    titleEl.textContent = "Itinerary for " + cityData.userInput.searchTerm;
+    titleEl.classList = "card-divider";
+    titleEl.setAttribute("id", "itinerary-title");
+    cardEl.appendChild(titleEl);
+
+    // create element for itinerary section
+    var listEl = document.createElement("div");
+    listEl.classList = "card-section";
+    listEl.setAttribute("id", "itinerary-list");
+
+    for (var i = 0; i < 4; i++) {
+        // create element for each place
+        var placeEl = document.createElement("a");
+        placeEl.classList = "button event";
+        placeEl.setAttribute("href", urlArray[i]);
+        placeEl.setAttribute("target", "_blank");
+        placeEl.textContent = wayPointArray[i] +": " + placeArray[i];
+        listEl.appendChild(placeEl);
+
+        cardEl.appendChild(listEl);
+        columnTwoEl.appendChild(cardEl);
+    }
+
+    // saveHistory(city, time, place);
+}
+
+function saveHistory(saveCity, saveTime, savePlace) {
+    console.log(saveCity, saveTime, savePlace);
+    var save = {city: saveCity, time: saveTime, place: savePlace};
+    console.log(save);
+    localStorage.setItem("city-explorer-save", JSON.stringify(save));
+}
 
 
 // globally call load page function 
