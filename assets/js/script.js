@@ -2,6 +2,13 @@ var searchForm = document.querySelector("#search-form");
 var cityUserInputEl = document.querySelector("#city-input");
 var invalidCity = document.getElementById("invalid-city");
 var columnTwoEl = document.querySelector("#column-two");
+var foodFilter = document.getElementById("food-filter").value;
+var eventFilter = document.getElementById("event-filter").value;
+var restOneIdx;
+var restTwoIdx;
+var eventOneIdx;
+var eventTwoIdx;
+
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
 
@@ -49,6 +56,13 @@ var attractData = {
 var cityString = "";
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
+// generates a random number to randomly select the password characters based on the appropriate array.
+function randomNumber(min, max) {
+    var value = Math.floor(Math.random() * (max - min + 1) + min);
+
+    return value;
+}
+
 // ----- Grab User Input ----- //
 // create function to obtain user input
 // grab city, state input
@@ -102,7 +116,6 @@ function city() {
             cityData.cityCoord.lon = parseFloat(cityData.cityCoord.lon);
             cityData.cityCoord.lat = data.results[0].geometry.location.lat;
             cityData.cityCoord.lat = parseFloat(cityData.cityCoord.lat);
-            console.log(cityData.cityCoord.lon, cityData.cityCoord.lat);
 
             restaurants();
         })
@@ -140,29 +153,49 @@ function restaurants() {
         })
         .then(data => {
             console.log(data);
-            // stores restaurant data
-            restData.restOne.lon = data.data[0].longitude;
-            restData.restOne.lat = data.data[0].latitude;
-            restData.restOne.restName = data.data[0].name;
-            restData.restOne.url = data.data[0].web_url;
-            restData.restTwo.lon = data.data[1].longitude;
-            restData.restTwo.lat = data.data[1].latitude;
-            restData.restTwo.restName = data.data[1].name;
-            restData.restTwo.url = data.data[1].web_url;
 
-            // hard coded for now
-            var key = 'American';
+            // Food Filter
+            var key = foodFilter;
             var arrFiltered = [];
 
-            // loops through cuisine data to find filter
-            for (var i = 0; i < data.data.length; i++) {
-                if (data.data[i].name) {
-                    for (var j = 0; j < data.data[i].cuisine.length; j++) {
-                        if (data.data[i].cuisine[j].name === key) {
-                            arrFiltered.push(data.data[i]);
+            // if there is a filter then run the for loop below
+            if (key !== " ") {
+                // loops through cuisine data to find filter
+                for (var i = 0; i < data.data.length; i++) {
+                    if (data.data[i].name) {
+                        for (var j = 0; j < data.data[i].cuisine.length; j++) {
+                            if (data.data[i].cuisine[j].name === key) {
+                                arrFiltered.push(data.data[i]);
+                            }
                         }
                     }
                 }
+                restOneIdx = randomNumber(0, arrFiltered.length);
+                restTwoIdx = randomNumber(0, arrFiltered.length);
+
+                restData.restOne.lon = arrFiltered[restOneIdx].longitude;
+                restData.restOne.lat = arrFiltered[restOneIdx].latitude;
+                restData.restOne.restName = arrFiltered[restOneIdx].name;
+                restData.restOne.url = arrFiltered[restOneIdx].web_url;
+                restData.restTwo.lon = arrFiltered[restTwoIdx].longitude;
+                restData.restTwo.lat = arrFiltered[restTwoIdx].latitude;
+                restData.restTwo.restName = arrFiltered[restTwoIdx].name;
+                restData.restTwo.url = arrFiltered[restTwoIdx].web_url;
+            }
+            // else search all options 
+            else {
+                // stores restaurant data
+                restOneIdx = randomNumber(0, data.data.length);
+                restTwoIdx = randomNumber(0, data.data.length);
+
+                restData.restOne.lon = data.data[restOneIdx].longitude;
+                restData.restOne.lat = data.data[restOneIdx].latitude;
+                restData.restOne.restName = data.data[restOneIdx].name;
+                restData.restOne.url = data.data[restOneIdx].web_url;
+                restData.restTwo.lon = data.data[restTwoIdx].longitude;
+                restData.restTwo.lat = data.data[restTwoIdx].latitude;
+                restData.restTwo.restName = data.data[restTwoIdx].name;
+                restData.restTwo.url = data.data[restTwoIdx].web_url;
             }
 
             console.log(arrFiltered);
@@ -196,28 +229,50 @@ function attractions() {
         })
         .then(data => {
             console.log(data);
-            // stores attraction data
-            attractData.eventOne.lon = data.data[0].longitude;
-            attractData.eventOne.lat = data.data[0].latitude;
-            attractData.eventOne.eventName = data.data[0].name;
-            attractData.eventOne.url = data.data[0].web_url;
-            attractData.eventTwo.lon = data.data[1].longitude;
-            attractData.eventTwo.lat = data.data[1].latitude;
-            attractData.eventTwo.eventName = data.data[1].name;
-            attractData.eventTwo.url = data.data[1].web_url;
 
-            var key = 'Nature & Parks';
+            // event filter
+            var key = eventFilter;
             var arrFiltered2 = [];
 
-            // loops through filtered subcategory list
-            for (var i = 0; i < data.data.length; i++) {
-                if (data.data[i]) {
-                    for (var j = 0; j < data.data[i].subcategory.length; j++) {
-                        if (data.data[i].subcategory[j].name === key) {
-                            arrFiltered2.push(data.data[i]);
+            // if there is a filter then run the for loop below
+            if (key !== " ") {
+                // loops through subcategory data to find filter
+                for (var i = 0; i < data.data.length; i++) {
+                    if (data.data[i]) {
+                        for (var j = 0; j < data.data[i].subcategory.length; j++) {
+                            if (data.data[i].subcategory[j].name === key) {
+                                arrFiltered2.push(data.data[i]);
+                            }
                         }
                     }
                 }
+                eventOneIdx = randomNumber(0, arrFiltered2.length);
+                eventTwoIdx = randomNumber(0, arrFiltered2.length);
+
+                attractData.eventOne.lon = arrFiltered2[eventOneIdx].longitude;
+                attractData.eventOne.lat = arrFiltered2[eventOneIdx].latitude;
+                attractData.eventOne.restName = arrFiltered2[eventOneIdx].name;
+                attractData.eventOne.url = arrFiltered2[eventOneIdx].web_url;
+                attractData.eventTwo.lon = arrFiltered2[eventTwoIdx].longitude;
+                attractData.eventTwo.lat = arrFiltered2[eventTwoIdx].latitude;
+                attractData.eventTwo.restName = arrFiltered2[eventTwoIdx].name;
+                attractData.eventTwo.url = arrFiltered2[eventTwoIdx].web_url;
+            }
+            // else search all options 
+            else {
+                // stores event data
+                eventOneIdx = randomNumber(0, data.data.length);
+                eventTwoIdx = randomNumber(0, data.data.length);
+
+                // stores attraction data
+                attractData.eventOne.lon = data.data[eventOneIdx].longitude;
+                attractData.eventOne.lat = data.data[eventOneIdx].latitude;
+                attractData.eventOne.eventName = data.data[eventOneIdx].name;
+                attractData.eventOne.url = data.data[eventOneIdx].web_url;
+                attractData.eventTwo.lon = data.data[eventTwoIdx].longitude;
+                attractData.eventTwo.lat = data.data[eventTwoIdx].latitude;
+                attractData.eventTwo.eventName = data.data[eventTwoIdx].name;
+                attractData.eventTwo.url = data.data[eventTwoIdx].web_url;
             }
 
             console.log(arrFiltered2);
