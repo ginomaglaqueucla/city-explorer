@@ -1,3 +1,6 @@
+// ----- Event Listener Call-outs -------------------------------
+var columnTwoEl = document.querySelector("#column-2");
+
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
 // create a data structure for variables to clean up code
@@ -268,7 +271,50 @@ function createMap(cityLon, cityLat, restaurantOneLon, restaurantOneLat, restaur
 // in the future error handle to exclude already generated restaurants/attractions ?
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
+function displayItinerary(city, time, place) {
 
+    // clear old data
+    columnTwoEl.textContent = "";
+
+    // create Foundation card element
+    var cardEl = document.createElement("div");
+    cardEl.classList = "card itinerary";
+    cardEl.setAttribute("id", "itinerary");
+
+    // create element for card title
+    var titleEl = document.createElement("div");
+    titleEl.textContent = "Itinerary for " + city;
+    titleEl.classList = "card-divider";
+    titleEl.setAttribute("id", "itinerary-title");
+    cardEl.appendChild(titleEl);
+
+    // create element for itinerary section
+    var listEl = document.createElement("div");
+    listEl.classList = "card-section";
+    listEl.setAttribute("id", "itinerary-list");
+
+    // for loop ? create element for each location
+    // need time, place name, place website
+    var placeEl = document.createElement("a");
+    placeEl.classList = "button event";
+    placeEl.setAttribute("href", "https://www.hollywoodbowl.com/");
+    placeEl.textContent = time + " " + place;
+    listEl.appendChild(placeEl);
+
+    cardEl.appendChild(listEl);
+    columnTwoEl.appendChild(cardEl);
+
+    saveHistory(city, time, place);
+}
+
+function saveHistory(saveCity, saveTime, savePlace) {
+    console.log(saveCity, saveTime, savePlace);
+
+    var save = {city: saveCity, time: saveTime, place: savePlace};
+    console.log(save);
+    localStorage.setItem("city-explorer-save", JSON.stringify(save));
+
+}
 
 // globally call load page function 
 
