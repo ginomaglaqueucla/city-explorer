@@ -8,6 +8,7 @@ var restOneIdx = 0;
 var restTwoIdx = 0;
 var eventOneIdx = 0;
 var eventTwoIdx = 0;
+var mapScriptContainer = document.getElementById('map-script-container');
 
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
@@ -318,10 +319,16 @@ function attractions() {
 // in the future will take in data structure as parameter
 // assign map data to data structure 
 function createMap() {
+    // clear out old script if there is some
+    if (document.getElementById("google-maps-api")) {
+        document.getElementById("google-maps-api").remove();
+    }
+
     // Create the script tag, set the appropriate attributes
     var script = document.createElement('script');
     script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap';
     script.defer = true;
+    script.id = "google-maps-api";
 
     // initates function to create google map
     window.initMap = function () {
@@ -342,7 +349,7 @@ function createMap() {
     };
 
     // Append the 'script' element to 'head'
-    document.head.appendChild(script);
+    mapScriptContainer.appendChild(script);
 
     // calculates and displays route on google maps
     function calculateAndDisplayRoute(directionsService, directionsRenderer) {
