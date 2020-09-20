@@ -323,9 +323,10 @@ function createMap() {
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 function displayItinerary() {
 
+    var displayCity = cityData.userInput.searchTerm.toUpperCase();
+    var wayPointArray = ["A", "B", "C", "D"];
     var placeArray = [restData.restOne.restName, attractData.eventOne.eventName, restData.restTwo.restName, attractData.eventTwo.eventName];
     var urlArray = [restData.restOne.url, attractData.eventOne.url, restData.restTwo.url, attractData.eventTwo.url];
-    var wayPointArray = ["A", "B", "C", "D"];
 
     // clear old data
     columnTwoEl.textContent = "";
@@ -337,7 +338,7 @@ function displayItinerary() {
 
     // create element for card title (city name)
     var titleEl = document.createElement("div");
-    titleEl.textContent = "Itinerary for " + cityData.userInput.searchTerm;
+    titleEl.textContent = "Itinerary for " + displayCity;
     titleEl.classList = "card-divider";
     titleEl.setAttribute("id", "itinerary-title");
     cardEl.appendChild(titleEl);
@@ -360,14 +361,27 @@ function displayItinerary() {
         columnTwoEl.appendChild(cardEl);
     }
 
-    // saveHistory(city, time, place);
+    saveHistory(displayCity, wayPointArray, placeArray, urlArray);
 }
 
-function saveHistory(saveCity, saveTime, savePlace) {
-    console.log(saveCity, saveTime, savePlace);
-    var save = {city: saveCity, time: saveTime, place: savePlace};
-    console.log(save);
-    localStorage.setItem("city-explorer-save", JSON.stringify(save));
+function saveHistory(saveCity, saveWayPoint, savePlace, saveUrl) {
+    // pulls in previously saved data
+    var searchHistory = JSON.parse(localStorage.getItem("search-history"));
+
+    var save = {city: saveCity, waypoint: saveWayPoint, place: savePlace, url: saveUrl};
+    searchHistory.push(save);
+    localStorage.setItem("search-history", JSON.stringify(searchHistory));
+}
+
+function loadPage() {
+    var getHistory = JSON.parse(localStorage.getItem("search-history"));
+
+    // if no prior search data exists in local storage
+    if (!getHistory) {
+        var getHistory = [];
+        localStorage.setItem("search-history", JSON.stringify(getHistory));
+    }
+
 }
 
 
