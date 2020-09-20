@@ -4,10 +4,10 @@ var invalidCity = document.getElementById("invalid-city");
 var columnTwoEl = document.querySelector("#column-two");
 var foodFilter = document.getElementById("food-filter").value;
 var eventFilter = document.getElementById("event-filter").value;
-var restOneIdx;
-var restTwoIdx;
-var eventOneIdx;
-var eventTwoIdx;
+var restOneIdx = 0;
+var restTwoIdx = 0;
+var eventOneIdx = 0;
+var eventTwoIdx = 0;
 
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
@@ -170,9 +170,14 @@ function restaurants() {
                         }
                     }
                 }
-                restOneIdx = randomNumber(0, arrFiltered.length);
-                restTwoIdx = randomNumber(0, arrFiltered.length);
-
+                // checks if there's more then one in the array then filter
+                if (arrFiltered.length > 1) {
+                    while (restOneIdx === restTwoIdx) {
+                        restOneIdx = randomNumber(0, arrFiltered.length);
+                        restTwoIdx = randomNumber(0, arrFiltered.length);
+                    }
+                }
+                // updates restaurant information
                 restData.restOne.lon = arrFiltered[restOneIdx].longitude;
                 restData.restOne.lat = arrFiltered[restOneIdx].latitude;
                 restData.restOne.restName = arrFiltered[restOneIdx].name;
@@ -184,18 +189,29 @@ function restaurants() {
             }
             // else search all options 
             else {
+                // filters out advertisements
+                for (var i = 0; i < data.data.length; i++) {
+                    if (data.data[i].name) {
+                        arrFiltered.push(data.data[i]);
+                    }
+                }
+                // arrFiltered = data.data.filter(d => !d.name == false); ---> another way to filter
                 // stores restaurant data
-                restOneIdx = randomNumber(0, data.data.length);
-                restTwoIdx = randomNumber(0, data.data.length);
-
-                restData.restOne.lon = data.data[restOneIdx].longitude;
-                restData.restOne.lat = data.data[restOneIdx].latitude;
-                restData.restOne.restName = data.data[restOneIdx].name;
-                restData.restOne.url = data.data[restOneIdx].web_url;
-                restData.restTwo.lon = data.data[restTwoIdx].longitude;
-                restData.restTwo.lat = data.data[restTwoIdx].latitude;
-                restData.restTwo.restName = data.data[restTwoIdx].name;
-                restData.restTwo.url = data.data[restTwoIdx].web_url;
+                if (arrFiltered.length > 1) {
+                    while (restOneIdx === restTwoIdx) {
+                        restOneIdx = randomNumber(0, arrFiltered.length);
+                        restTwoIdx = randomNumber(0, arrFiltered.length);
+                    }
+                }
+                // updates restaurant information
+                restData.restOne.lon = arrFiltered[restOneIdx].longitude;
+                restData.restOne.lat = arrFiltered[restOneIdx].latitude;
+                restData.restOne.restName = arrFiltered[restOneIdx].name;
+                restData.restOne.url = arrFiltered[restOneIdx].web_url;
+                restData.restTwo.lon = arrFiltered[restTwoIdx].longitude;
+                restData.restTwo.lat = arrFiltered[restTwoIdx].latitude;
+                restData.restTwo.restName = arrFiltered[restTwoIdx].name;
+                restData.restTwo.url = arrFiltered[restTwoIdx].web_url;
             }
 
             console.log(arrFiltered);
@@ -246,9 +262,14 @@ function attractions() {
                         }
                     }
                 }
-                eventOneIdx = randomNumber(0, arrFiltered2.length);
-                eventTwoIdx = randomNumber(0, arrFiltered2.length);
-
+                // checks if there's more then one in the array then filter
+                if (arrFiltered2.length > 1) {
+                    while (eventOneIdx === eventTwoIdx) {
+                        eventOneIdx = randomNumber(0, arrFiltered2.length);
+                        eventTwoIdx = randomNumber(0, arrFiltered2.length);
+                    }
+                }
+                // updates event information
                 attractData.eventOne.lon = arrFiltered2[eventOneIdx].longitude;
                 attractData.eventOne.lat = arrFiltered2[eventOneIdx].latitude;
                 attractData.eventOne.restName = arrFiltered2[eventOneIdx].name;
@@ -260,19 +281,23 @@ function attractions() {
             }
             // else search all options 
             else {
-                // stores event data
-                eventOneIdx = randomNumber(0, data.data.length);
-                eventTwoIdx = randomNumber(0, data.data.length);
+                // checks if there's more then one in the array then filter
+                if (arrFiltered2.length > 1) {
+                    while (eventOneIdx === eventTwoIdx) {
+                        eventOneIdx = randomNumber(0, arrFiltered2.length);
+                        eventTwoIdx = randomNumber(0, arrFiltered2.length);
+                    }
+                }
 
                 // stores attraction data
-                attractData.eventOne.lon = data.data[eventOneIdx].longitude;
-                attractData.eventOne.lat = data.data[eventOneIdx].latitude;
-                attractData.eventOne.eventName = data.data[eventOneIdx].name;
-                attractData.eventOne.url = data.data[eventOneIdx].web_url;
-                attractData.eventTwo.lon = data.data[eventTwoIdx].longitude;
-                attractData.eventTwo.lat = data.data[eventTwoIdx].latitude;
-                attractData.eventTwo.eventName = data.data[eventTwoIdx].name;
-                attractData.eventTwo.url = data.data[eventTwoIdx].web_url;
+                attractData.eventOne.lon = arrFiltered2[eventOneIdx].longitude;
+                attractData.eventOne.lat = arrFiltered2[eventOneIdx].latitude;
+                attractData.eventOne.eventName = arrFiltered2[eventOneIdx].name;
+                attractData.eventOne.url = arrFiltered2[eventOneIdx].web_url;
+                attractData.eventTwo.lon = arrFiltered2[eventTwoIdx].longitude;
+                attractData.eventTwo.lat = arrFiltered2[eventTwoIdx].latitude;
+                attractData.eventTwo.eventName = arrFiltered2[eventTwoIdx].name;
+                attractData.eventTwo.url = arrFiltered2[eventTwoIdx].web_url;
             }
 
             console.log(arrFiltered2);
