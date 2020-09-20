@@ -152,7 +152,6 @@ function restaurants() {
             return response.json();
         })
         .then(data => {
-            console.log(data);
 
             // Food Filter
             var key = foodFilter;
@@ -244,7 +243,6 @@ function attractions() {
             return response.json();
         })
         .then(data => {
-            console.log(data);
 
             // event filter
             var key = eventFilter;
@@ -281,6 +279,10 @@ function attractions() {
             }
             // else search all options 
             else {
+                // pushes to arrFiltered2
+                for (var i = 0; i < data.data.length; i++) {
+                    arrFiltered2.push(data.data[i]);
+                }
                 // checks if there's more then one in the array then filter
                 if (arrFiltered2.length > 1) {
                     while (eventOneIdx === eventTwoIdx) {
