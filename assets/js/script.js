@@ -145,7 +145,7 @@ function restaurants() {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
-            "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
+            "x-rapidapi-key": "14df69b00emshc85f3fe070e0c10p12bedcjsna5d97aca97be"
         }
     })
 
@@ -237,7 +237,7 @@ function attractions() {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
-            "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
+            "x-rapidapi-key": "14df69b00emshc85f3fe070e0c10p12bedcjsna5d97aca97be"
         }
     })
         .then(response => {
