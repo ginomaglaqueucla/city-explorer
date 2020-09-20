@@ -2,6 +2,7 @@ var searchForm = document.querySelector("#search-form");
 var cityUserInputEl = document.querySelector("#city-input");
 var invalidCity = document.getElementById("invalid-city");
 var columnTwoEl = document.querySelector("#column-two");
+var searchHistoryButtonsEl = document.querySelector("#search-history-buttons");
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
 
@@ -331,6 +332,17 @@ function displayItinerary() {
     // clear old data
     columnTwoEl.textContent = "";
 
+    // creates button ----------------------------------------------------------------
+    var buttonEl = document.createElement("button");
+    buttonEl.classList = "button expanded";
+    buttonEl.textContent = displayCity;
+    // determines next id number to assign and assigns it
+    var checkStorage = JSON.parse(localStorage.getItem("search-history"));
+    var nextId = checkStorage.length;
+    buttonEl.setAttribute("id", nextId);
+    searchHistoryButtonsEl.appendChild(buttonEl);
+    // -------------------------------------------------------------------------------
+
     // create Foundation card element
     var cardEl = document.createElement("div");
     cardEl.classList = "card itinerary";
@@ -364,6 +376,10 @@ function displayItinerary() {
     saveHistory(displayCity, wayPointArray, placeArray, urlArray);
 }
 
+// function loadButton() {
+
+// }
+
 function saveHistory(saveCity, saveWayPoint, savePlace, saveUrl) {
     // pulls in previously saved data
     var searchHistory = JSON.parse(localStorage.getItem("search-history"));
@@ -374,18 +390,30 @@ function saveHistory(saveCity, saveWayPoint, savePlace, saveUrl) {
 }
 
 function loadPage() {
+    // debugger;
     var getHistory = JSON.parse(localStorage.getItem("search-history"));
+    // console.log(getHistory);
 
     // if no prior search data exists in local storage
     if (!getHistory) {
         var getHistory = [];
         localStorage.setItem("search-history", JSON.stringify(getHistory));
+        console.log("there is no history");
     }
 
+    for (var i = 0; i < getHistory.length; i++) {
+        // create buttons to display search history
+        var addButtonEl = document.createElement("button");
+        addButtonEl.classList = "button expanded";
+        addButtonEl.textContent = getHistory[i].city;
+        addButtonEl.setAttribute("id", i);
+        searchHistoryButtonsEl.appendChild(addButtonEl);
+    }
 }
 
 
 // globally call load page function 
+loadPage();
 
 // event listener for submit click (user input)
 // event listener for favorites click
