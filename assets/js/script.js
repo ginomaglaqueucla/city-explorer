@@ -132,7 +132,8 @@ function restaurants() {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
-            "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
+            // "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
+            "x-rapidapi-key": "14df69b00emshc85f3fe070e0c10p12bedcjsna5d97aca97be"
         }
     })
 
@@ -189,7 +190,8 @@ function attractions() {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
-            "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
+            // "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
+            "x-rapidapi-key": "14df69b00emshc85f3fe070e0c10p12bedcjsna5d97aca97be"
         }
     })
         .then(response => {
@@ -306,11 +308,15 @@ function createMap() {
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 function generateItinerary() {
     var displayCity = cityData.userInput.searchTerm.toUpperCase();
+    var cityLatCoord = cityData.cityCoord.lat;
+    var cityLonCoord = cityData.cityCoord.lon;
     var wayPointArray = ["A", "B", "C", "D"];
     var placeArray = [restData.restOne.restName, attractData.eventOne.eventName, restData.restTwo.restName, attractData.eventTwo.eventName];
     var urlArray = [restData.restOne.url, attractData.eventOne.url, restData.restTwo.url, attractData.eventTwo.url];
+    var latArray = [restData.restOne.lat, attractData.eventOne.lat, restData.restTwo.lat, attractData.eventTwo.lat];
+    var lonArray = [restData.restOne.lon, attractData.eventOne.lon, restData.restTwo.lon, attractData.eventTwo.lon];
 
-    var itineraryObject = {"city": displayCity, "waypoint": wayPointArray, "place": placeArray, "url": urlArray};
+    var itineraryObject = {"city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray};
 
     displayItinerary(itineraryObject);
     saveHistory(itineraryObject);
@@ -331,7 +337,6 @@ function displayItinerary(displayObject) {
 
     // clear old data
     columnTwoEl.textContent = "";
-
 
     // create Foundation card element
     var cardEl = document.createElement("div");
@@ -382,7 +387,7 @@ function loadFromButton(event) {
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ save history  ------ //
-// this function saves data from previously fetched itineraries
+// this function saves data for recently fetched itineraries
 // this function saves to local storage
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
@@ -395,7 +400,6 @@ function saveHistory(saveObject) {
     buttonEl.classList = "button expanded";
     buttonEl.textContent = saveObject.city;
     // determines next id number to assign and assigns it
-    // var checkStorage = JSON.parse(localStorage.getItem("search-history"));
     var nextId = searchHistory.length;
     buttonEl.setAttribute("id", nextId);
     searchHistoryButtonsEl.appendChild(buttonEl);
@@ -412,9 +416,8 @@ function saveHistory(saveObject) {
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
 function loadPage() {
-    // debugger;
+
     var getHistory = JSON.parse(localStorage.getItem("search-history"));
-    // console.log(getHistory);
 
     // if no prior search data exists in local storage
     if (!getHistory) {
