@@ -313,6 +313,7 @@ function generateItinerary() {
     var itineraryObject = {"city": displayCity, "waypoint": wayPointArray, "place": placeArray, "url": urlArray};
 
     displayItinerary(itineraryObject);
+    saveHistory(itineraryObject);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
@@ -331,16 +332,6 @@ function displayItinerary(displayObject) {
     // clear old data
     columnTwoEl.textContent = "";
 
-    // creates button ----------------------------------------------------------------
-    var buttonEl = document.createElement("button");
-    buttonEl.classList = "button expanded";
-    buttonEl.textContent = displayObject.city;
-    // determines next id number to assign and assigns it
-    var checkStorage = JSON.parse(localStorage.getItem("search-history"));
-    var nextId = checkStorage.length;
-    buttonEl.setAttribute("id", nextId);
-    searchHistoryButtonsEl.appendChild(buttonEl);
-    // -------------------------------------------------------------------------------
 
     // create Foundation card element
     var cardEl = document.createElement("div");
@@ -372,7 +363,6 @@ function displayItinerary(displayObject) {
         columnTwoEl.appendChild(cardEl);
     }
 
-    saveHistory(displayObject);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
@@ -400,7 +390,17 @@ function saveHistory(saveObject) {
     // pulls in previously saved data
     var searchHistory = JSON.parse(localStorage.getItem("search-history"));
 
-    // var save = {city: saveCity, waypoint: saveWayPoint, place: savePlace, url: saveUrl};
+    // creates button ----------------------------------------------------------------
+    var buttonEl = document.createElement("button");
+    buttonEl.classList = "button expanded";
+    buttonEl.textContent = saveObject.city;
+    // determines next id number to assign and assigns it
+    // var checkStorage = JSON.parse(localStorage.getItem("search-history"));
+    var nextId = searchHistory.length;
+    buttonEl.setAttribute("id", nextId);
+    searchHistoryButtonsEl.appendChild(buttonEl);
+    // -------------------------------------------------------------------------------
+
     searchHistory.push(saveObject);
     localStorage.setItem("search-history", JSON.stringify(searchHistory));
 }
