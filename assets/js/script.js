@@ -105,7 +105,6 @@ function getUserInput(event) {
 // in the future fetched data will be a part of the data structure
 // call trip advisory api functions
 function city() {
-
     // google geocode api to search for user input
     fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${cityString}&key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg`)
         .then(function (response) {
