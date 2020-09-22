@@ -305,7 +305,7 @@ function attractions() {
             }
 
             console.log(arrFiltered2);
-            // createMap();
+            createMap();
             // displayItinerary();
             generateItinerary();
         })
@@ -405,7 +405,7 @@ function generateItinerary() {
 
     var itineraryObject = {"city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray};
 
-    // displayItinerary(itineraryObject);
+    displayItinerary(itineraryObject);
     saveHistory(itineraryObject);
 }
 // ------------------------------------------------------------------------------------------------------------------------------------- //
@@ -494,14 +494,7 @@ function displayItinerary(displayObject) {
         columnTwoEl.appendChild(cardEl);
     }
 
-    restData.restOne.lon = displayObject.long[0];
-    restData.restOne.lat = displayObject.lat[0];
-    restData.restTwo.lon = displayObject.long[2];
-    restData.restTwo.lat = displayObject.lat[2];
-    attractData.eventOne.lon = displayObject.long[1];
-    attractData.eventOne.lat = displayObject.lat[1];
-    attractData.eventTwo.lon = displayObject.long[3];
-    attractData.eventTwo.lat = displayObject.lat[3];
+
 
 }
 
@@ -515,18 +508,27 @@ function loadFromButton(event) {
     // pulls in previously saved data
     var searchHistory = JSON.parse(localStorage.getItem("search-history"));
 
-    var buttonIndex = searchHistory.length - 1;
-    if(event){
-        buttonIndex = event.target.id;
-        console.log("event triggered");
-    }
+
+
+    var buttonIndex = event.target.id;
+
+
 
     var currentLoad = searchHistory[buttonIndex];
+
+    restData.restOne.lon = displayObject.long[0];
+    restData.restOne.lat = displayObject.lat[0];
+    restData.restTwo.lon = displayObject.long[2];
+    restData.restTwo.lat = displayObject.lat[2];
+    attractData.eventOne.lon = displayObject.long[1];
+    attractData.eventOne.lat = displayObject.lat[1];
+    attractData.eventTwo.lon = displayObject.long[3];
+    attractData.eventTwo.lat = displayObject.lat[3];w
 
 //    var itineraryObject = {"city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray};
 
     displayItinerary(currentLoad);
-    createMap();
+    // createMap();
 
 
 }
@@ -554,7 +556,7 @@ function saveHistory(saveObject) {
     searchHistory.push(saveObject);
     localStorage.setItem("search-history", JSON.stringify(searchHistory));
     // window.location.reload();
-    loadFromButton();
+    // loadFromButton();
 
 }
 
