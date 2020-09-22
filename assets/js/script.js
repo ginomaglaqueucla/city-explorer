@@ -2,7 +2,15 @@ var searchForm = document.querySelector("#search-form");
 var cityUserInputEl = document.querySelector("#city-input");
 var invalidCity = document.getElementById("invalid-city");
 var columnTwoEl = document.querySelector("#column-two");
+var foodFilter = document.getElementById("food-filter").value;
+var eventFilter = document.getElementById("event-filter").value;
+var restOneIdx = 0;
+var restTwoIdx = 0;
+var eventOneIdx = 0;
+var eventTwoIdx = 0;
+var mapScriptContainer = document.getElementById('map-script-container');
 var searchHistoryButtonsEl = document.querySelector("#search-history-buttons");
+
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
 
@@ -50,6 +58,13 @@ var attractData = {
 var cityString = "";
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
+// generates a random number to randomly select the password characters based on the appropriate array.
+function randomNumber(min, max) {
+    var value = Math.floor(Math.random() * (max - min + 1) + min);
+
+    return value;
+}
+
 // ----- Grab User Input ----- //
 // create function to obtain user input
 // grab city, state input
@@ -72,7 +87,7 @@ function getUserInput(event) {
     cityString = cityData.userInput.searchTerm
     cityString = " " + cityString.trim();
     cityString = cityString.replace(" ", "+");
-  
+
     // grabs the input of the string after the , and checks if the length is not = 2 since the user has to enter in a two-letter state abbreviation. if it is not equal to 2, return an error.
     var check = cityString.substring(cityString.indexOf(", ") + 2);
     if (check.length !== 2) {
@@ -91,7 +106,6 @@ function getUserInput(event) {
 // in the future fetched data will be a part of the data structure
 // call trip advisory api functions
 function city() {
-
     // google geocode api to search for user input
     fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${cityString}&key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg`)
         .then(function (response) {
@@ -103,7 +117,6 @@ function city() {
             cityData.cityCoord.lon = parseFloat(cityData.cityCoord.lon);
             cityData.cityCoord.lat = data.results[0].geometry.location.lat;
             cityData.cityCoord.lat = parseFloat(cityData.cityCoord.lat);
-            console.log(cityData.cityCoord.lon, cityData.cityCoord.lat);
 
             restaurants();
         })
@@ -132,7 +145,6 @@ function restaurants() {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
-            // "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
             "x-rapidapi-key": "14df69b00emshc85f3fe070e0c10p12bedcjsna5d97aca97be"
         }
     })
@@ -141,30 +153,65 @@ function restaurants() {
             return response.json();
         })
         .then(data => {
-            console.log(data);
-            // stores restaurant data
-            restData.restOne.lon = data.data[0].longitude;
-            restData.restOne.lat = data.data[0].latitude;
-            restData.restOne.restName = data.data[0].name;
-            restData.restOne.url = data.data[0].web_url;
-            restData.restTwo.lon = data.data[1].longitude;
-            restData.restTwo.lat = data.data[1].latitude;
-            restData.restTwo.restName = data.data[1].name;
-            restData.restTwo.url = data.data[1].web_url;
 
-            // hard coded for now
-            var key = 'American';
+            // Food Filter
+            var key = foodFilter;
             var arrFiltered = [];
 
-            // loops through cuisine data to find filter
-            for (var i = 0; i < data.data.length; i++) {
-                if (data.data[i].name) {
-                    for (var j = 0; j < data.data[i].cuisine.length; j++) {
-                        if (data.data[i].cuisine[j].name === key) {
-                            arrFiltered.push(data.data[i]);
+            // if there is a filter then run the for loop below
+            if (key !== " ") {
+                // loops through cuisine data to find filter
+                for (var i = 0; i < data.data.length; i++) {
+                    if (data.data[i].name) {
+                        for (var j = 0; j < data.data[i].cuisine.length; j++) {
+                            if (data.data[i].cuisine[j].name === key) {
+                                arrFiltered.push(data.data[i]);
+                            }
                         }
                     }
                 }
+                // checks if there's more then one in the array then filter
+                if (arrFiltered.length > 1) {
+                    while (restOneIdx === restTwoIdx) {
+                        restOneIdx = randomNumber(0, arrFiltered.length);
+                        restTwoIdx = randomNumber(0, arrFiltered.length);
+                    }
+                }
+                // updates restaurant information
+                restData.restOne.lon = arrFiltered[restOneIdx].longitude;
+                restData.restOne.lat = arrFiltered[restOneIdx].latitude;
+                restData.restOne.restName = arrFiltered[restOneIdx].name;
+                restData.restOne.url = arrFiltered[restOneIdx].web_url;
+                restData.restTwo.lon = arrFiltered[restTwoIdx].longitude;
+                restData.restTwo.lat = arrFiltered[restTwoIdx].latitude;
+                restData.restTwo.restName = arrFiltered[restTwoIdx].name;
+                restData.restTwo.url = arrFiltered[restTwoIdx].web_url;
+            }
+            // else search all options 
+            else {
+                // filters out advertisements
+                for (var i = 0; i < data.data.length; i++) {
+                    if (data.data[i].name) {
+                        arrFiltered.push(data.data[i]);
+                    }
+                }
+                // arrFiltered = data.data.filter(d => !d.name == false); ---> another way to filter
+                // stores restaurant data
+                if (arrFiltered.length > 1) {
+                    while (restOneIdx === restTwoIdx) {
+                        restOneIdx = randomNumber(0, arrFiltered.length);
+                        restTwoIdx = randomNumber(0, arrFiltered.length);
+                    }
+                }
+                // updates restaurant information
+                restData.restOne.lon = arrFiltered[restOneIdx].longitude;
+                restData.restOne.lat = arrFiltered[restOneIdx].latitude;
+                restData.restOne.restName = arrFiltered[restOneIdx].name;
+                restData.restOne.url = arrFiltered[restOneIdx].web_url;
+                restData.restTwo.lon = arrFiltered[restTwoIdx].longitude;
+                restData.restTwo.lat = arrFiltered[restTwoIdx].latitude;
+                restData.restTwo.restName = arrFiltered[restTwoIdx].name;
+                restData.restTwo.url = arrFiltered[restTwoIdx].web_url;
             }
 
             console.log(arrFiltered);
@@ -190,7 +237,6 @@ function attractions() {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
-            // "x-rapidapi-key": "693350c65dmsh5ad1865d9215e1dp1a9131jsn53d32f4069ff"
             "x-rapidapi-key": "14df69b00emshc85f3fe070e0c10p12bedcjsna5d97aca97be"
         }
     })
@@ -198,29 +244,63 @@ function attractions() {
             return response.json();
         })
         .then(data => {
-            console.log(data);
-            // stores attraction data
-            attractData.eventOne.lon = data.data[0].longitude;
-            attractData.eventOne.lat = data.data[0].latitude;
-            attractData.eventOne.eventName = data.data[0].name;
-            attractData.eventOne.url = data.data[0].web_url;
-            attractData.eventTwo.lon = data.data[1].longitude;
-            attractData.eventTwo.lat = data.data[1].latitude;
-            attractData.eventTwo.eventName = data.data[1].name;
-            attractData.eventTwo.url = data.data[1].web_url;
 
-            var key = 'Nature & Parks';
+            // event filter
+            var key = eventFilter;
             var arrFiltered2 = [];
 
-            // loops through filtered subcategory list
-            for (var i = 0; i < data.data.length; i++) {
-                if (data.data[i]) {
-                    for (var j = 0; j < data.data[i].subcategory.length; j++) {
-                        if (data.data[i].subcategory[j].name === key) {
-                            arrFiltered2.push(data.data[i]);
+            // if there is a filter then run the for loop below
+            if (key !== " ") {
+                // loops through subcategory data to find filter
+                for (var i = 0; i < data.data.length; i++) {
+                    if (data.data[i]) {
+                        for (var j = 0; j < data.data[i].subcategory.length; j++) {
+                            if (data.data[i].subcategory[j].name === key) {
+                                arrFiltered2.push(data.data[i]);
+                            }
                         }
                     }
                 }
+                // checks if there's more then one in the array then filter
+                if (arrFiltered2.length > 1) {
+                    while (eventOneIdx === eventTwoIdx) {
+                        eventOneIdx = randomNumber(0, arrFiltered2.length);
+                        eventTwoIdx = randomNumber(0, arrFiltered2.length);
+                    }
+                }
+                // updates event information
+                attractData.eventOne.lon = arrFiltered2[eventOneIdx].longitude;
+                attractData.eventOne.lat = arrFiltered2[eventOneIdx].latitude;
+                attractData.eventOne.restName = arrFiltered2[eventOneIdx].name;
+                attractData.eventOne.url = arrFiltered2[eventOneIdx].web_url;
+                attractData.eventTwo.lon = arrFiltered2[eventTwoIdx].longitude;
+                attractData.eventTwo.lat = arrFiltered2[eventTwoIdx].latitude;
+                attractData.eventTwo.restName = arrFiltered2[eventTwoIdx].name;
+                attractData.eventTwo.url = arrFiltered2[eventTwoIdx].web_url;
+            }
+            // else search all options 
+            else {
+                // pushes to arrFiltered2
+                for (var i = 0; i < data.data.length; i++) {
+                    arrFiltered2.push(data.data[i]);
+                }
+                // checks if there's more then one in the array then filter
+                if (arrFiltered2.length > 1) {
+                    while (eventOneIdx === eventTwoIdx) {
+                        eventOneIdx = randomNumber(0, arrFiltered2.length);
+                        eventTwoIdx = randomNumber(0, arrFiltered2.length);
+                    }
+                }
+
+                // stores attraction data
+                attractData.eventOne.lon = arrFiltered2[eventOneIdx].longitude;
+                attractData.eventOne.lat = arrFiltered2[eventOneIdx].latitude;
+                attractData.eventOne.eventName = arrFiltered2[eventOneIdx].name;
+                attractData.eventOne.url = arrFiltered2[eventOneIdx].web_url;
+                attractData.eventTwo.lon = arrFiltered2[eventTwoIdx].longitude;
+                attractData.eventTwo.lat = arrFiltered2[eventTwoIdx].latitude;
+                attractData.eventTwo.eventName = arrFiltered2[eventTwoIdx].name;
+                attractData.eventTwo.url = arrFiltered2[eventTwoIdx].web_url;
             }
 
             console.log(arrFiltered2);
@@ -240,10 +320,16 @@ function attractions() {
 // in the future will take in data structure as parameter
 // assign map data to data structure 
 function createMap() {
+    // clear out old script if there is some
+    if (document.getElementById("google-maps-api")) {
+        document.getElementById("google-maps-api").remove();
+    }
+
     // Create the script tag, set the appropriate attributes
     var script = document.createElement('script');
     script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap';
     script.defer = true;
+    script.id = "google-maps-api";
 
     // initates function to create google map
     window.initMap = function () {
@@ -264,7 +350,7 @@ function createMap() {
     };
 
     // Append the 'script' element to 'head'
-    document.head.appendChild(script);
+    mapScriptContainer.appendChild(script);
 
     // calculates and displays route on google maps
     function calculateAndDisplayRoute(directionsService, directionsRenderer) {
@@ -362,6 +448,7 @@ function displayItinerary(displayObject) {
         placeEl.setAttribute("href", displayObject.url[i]);
         placeEl.setAttribute("target", "_blank");
         placeEl.textContent = displayObject.waypoint[i] +": " + displayObject.place[i];
+
         listEl.appendChild(placeEl);
 
         cardEl.appendChild(listEl);
@@ -383,6 +470,7 @@ function loadFromButton(event) {
     var searchHistory = JSON.parse(localStorage.getItem("search-history"));
     var currentLoad = searchHistory[buttonIndex];
     displayItinerary(currentLoad);
+
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //

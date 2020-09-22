@@ -7,8 +7,9 @@
     <!-- Compressed CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/css/foundation.min.css"
         integrity="sha256-ogmFxjqiTMnZhxCqVmcqTvjfe1Y/ec4WaRj/aQPvn+I=" crossorigin="anonymous">
+    <div id="map-script-container"></div>
     <link rel="stylesheet" href="./assets/css/style.css">
-    <title>City Learner</title>
+    <title>City Explorer</title>
 </head>
 
 <body>
@@ -39,22 +40,23 @@
                     <!--food options pull-down-->
                     <label>Type of Food // this shows the non-multi-select version
                         <!--would be awesome if we could dynamically create the options-->
-                        <select>
-                            <option value="american">American</option>
-                            <option value="italian">Italian</option>
-                            <option value="mexican">Mexican</option>
-                            <option value="etc">Etc</option>
+                        <select id="food-filter">
+                            <option value=" ">Surprise Me!</option>
+                            <option value="American">American</option>
+                            <option value="Italian">Italian</option>
+                            <option value="Asian">Asian</option>
+                            <option value="Vegetarian Friendly">Vegetarian</option>
+                            <option value="Vegan Options">Vegan</option>
                         </select>
                     </label>
 
                     <!--event options pull-down-->
                     <label>Type of Event // this shows the multi-select version
                         <!--would be awesome if we could dynamically create the options-->
-                        <select multiple>
-                            <option value="outdoor">Outdoor</option>
-                            <option value="indoor">Indoor</option>
-                            <option value="crafts">Crafts</option>
-                            <option value="movies">Movies</option>
+                        <select id="event-filter">
+                            <option value=" ">Surprise Me!</option>
+                            <option value="Tours">Tours</option>
+                            <option value="Sights & Landmarks">Sights & Landmarks</option>
                         </select>
                     </label>
 
