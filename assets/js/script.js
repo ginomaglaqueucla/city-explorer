@@ -4,11 +4,13 @@ var invalidCity = document.getElementById("invalid-city");
 var columnTwoEl = document.querySelector("#column-two");
 var foodFilter = document.getElementById("food-filter").value;
 var eventFilter = document.getElementById("event-filter").value;
+var clearCitiesButton = document.getElementById("clear-cities");
 var restOneIdx = 0;
 var restTwoIdx = 0;
 var eventOneIdx = 0;
 var eventTwoIdx = 0;
 var mapScriptContainer = document.getElementById('map-script-container');
+var searchHistoryButtonsEl = document.querySelector("#search-history-buttons");
 
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
@@ -22,8 +24,8 @@ var cityData = {
         attractFilter: ""
     },
     cityCoord: {
-        lat: "",
-        lon: ""
+        lat: 0.0,
+        lon: 0.0
     }
 };
 var restData = {
@@ -77,13 +79,13 @@ function getUserInput(event) {
     event.preventDefault();
 
     // grab user input
-    cityData.userInput.searchTerm = cityUserInputEl.value;
+    cityData.userInput.searchTerm = cityUserInputEl.value.toLowerCase();
 
     // reset input field
     searchForm.reset();
 
     // perform error handling
-    cityString = cityData.userInput.searchTerm
+    cityString = cityData.userInput.searchTerm;
     cityString = " " + cityString.trim();
     cityString = cityString.replace(" ", "+");
 
@@ -303,8 +305,9 @@ function attractions() {
             }
 
             console.log(arrFiltered2);
-            createMap();
-            displayItinerary();
+            // createMap();
+            // displayItinerary();
+            generateItinerary();
         })
         .catch(err => {
             console.log(err);
@@ -380,6 +383,30 @@ function createMap() {
         );
     }
 
+}
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+// ------ generate Itinerary  ------ //
+// this function pulls recently fetched data and contains it into an object
+// the object includes the city name, waypoints, fetched restaurants/event locations, and respective urls
+// calls display Itinerary function
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+function generateItinerary() {
+    var displayCity = cityData.userInput.searchTerm.toUpperCase();
+    var cityLatCoord = cityData.cityCoord.lat;
+    var cityLonCoord = cityData.cityCoord.lon;
+    var wayPointArray = ["A", "B", "C", "D"];
+    var placeArray = [restData.restOne.restName, attractData.eventOne.eventName, restData.restTwo.restName, attractData.eventTwo.eventName];
+    var urlArray = [restData.restOne.url, attractData.eventOne.url, restData.restTwo.url, attractData.eventTwo.url];
+    var latArray = [restData.restOne.lat, attractData.eventOne.lat, restData.restTwo.lat, attractData.eventTwo.lat];
+    var lonArray = [restData.restOne.lon, attractData.eventOne.lon, restData.restTwo.lon, attractData.eventTwo.lon];
+
+    var itineraryObject = { "city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray };
+
+    // displayItinerary(itineraryObject);
+    saveHistory(itineraryObject);
 }
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
@@ -464,4 +491,157 @@ function saveHistory(saveCity, saveTime, savePlace) {
 // event listener for submit click (user input)
 // event listener for favorites click
 // event listener for search history click
+
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+// ------ display Itinerary  ------ //
+// this function will DOM display recently generated or favorite/searched event click onto page
+// DOM create button for user to re-generate a new itinerary if desired
+// DOM create button for user to save
+//
+// (event listener) if save call save to local storage "favorites or bookmarks" unless function was called by user clicking from favorites
+// (event listener) if user decides to regenerate, call city function
+// create algorithm logic to identify if this function was called from a favorite click, search click, or submit click
+// in the future error handle to exclude already generated restaurants/attractions ?
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+function displayItinerary(displayObject) {
+
+    // clear old data
+    columnTwoEl.textContent = "";
+
+    // create Foundation card element
+    var cardEl = document.createElement("div");
+    cardEl.classList = "card itinerary";
+    cardEl.setAttribute("id", "itinerary");
+
+    // create element for card title (city name)
+    var titleEl = document.createElement("div");
+    titleEl.textContent = "Itinerary for " + displayObject.city;
+    titleEl.classList = "card-divider";
+    titleEl.setAttribute("id", "itinerary-title");
+    cardEl.appendChild(titleEl);
+
+    // create element for itinerary section
+    var listEl = document.createElement("div");
+    listEl.classList = "card-section";
+    listEl.setAttribute("id", "itinerary-list");
+
+    for (var i = 0; i < 4; i++) {
+        // create element for each place
+        var placeEl = document.createElement("a");
+        placeEl.classList = "button event";
+        placeEl.setAttribute("href", displayObject.url[i]);
+        placeEl.setAttribute("target", "_blank");
+        placeEl.textContent = displayObject.waypoint[i] + ": " + displayObject.place[i];
+
+        listEl.appendChild(placeEl);
+
+        cardEl.appendChild(listEl);
+        columnTwoEl.appendChild(cardEl);
+    }
+
+    restData.restOne.lon = displayObject.long[0];
+    restData.restOne.lat = displayObject.lat[0];
+    restData.restTwo.lon = displayObject.long[2];
+    restData.restTwo.lat = displayObject.lat[2];
+    attractData.eventOne.lon = displayObject.long[1];
+    attractData.eventOne.lat = displayObject.lat[1];
+    attractData.eventTwo.lon = displayObject.long[3];
+    attractData.eventTwo.lat = displayObject.lat[3];
+
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+// ------ load from search history button  ------ //
+// this function loads data from previously fetched itineraries
+// this function gets from local storage and display onto page
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+
+function loadFromButton(event) {
+    // pulls in previously saved data
+    var searchHistory = JSON.parse(localStorage.getItem("search-history"));
+
+    var buttonIndex = searchHistory.length - 1;
+    if (event) {
+        buttonIndex = event.target.id;
+        console.log("event triggered");
+    }
+
+    var currentLoad = searchHistory[buttonIndex];
+
+    //    var itineraryObject = {"city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray};
+
+    displayItinerary(currentLoad);
+    createMap();
+
+
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+// ------ save history  ------ //
+// this function saves data for recently fetched itineraries
+// this function saves to local storage
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+
+function saveHistory(saveObject) {
+    // pulls in previously saved data
+    var searchHistory = JSON.parse(localStorage.getItem("search-history"));
+
+    // creates button ----------------------------------------------------------------
+    var buttonEl = document.createElement("button");
+    buttonEl.classList = "button expanded";
+    buttonEl.textContent = saveObject.city;
+    // determines next id number to assign and assigns it
+    var nextId = searchHistory.length;
+    buttonEl.setAttribute("id", nextId);
+    searchHistoryButtonsEl.appendChild(buttonEl);
+    // -------------------------------------------------------------------------------
+
+    searchHistory.push(saveObject);
+    localStorage.setItem("search-history", JSON.stringify(searchHistory));
+    // window.location.reload();
+    loadFromButton();
+
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+// ------ load page  ------ //
+// this function will load the static homepage
+// this function will get local storage (favorites & search history) and display onto page
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+
+function loadPage() {
+
+    var getHistory = JSON.parse(localStorage.getItem("search-history"));
+
+    // if no prior search data exists in local storage
+    if (!getHistory) {
+        var getHistory = [];
+        localStorage.setItem("search-history", JSON.stringify(getHistory));
+        console.log("there is no history");
+    }
+    else {
+        for (var i = 0; i < getHistory.length; i++) {
+            // create buttons to display search history
+            var addButtonEl = document.createElement("button");
+            addButtonEl.classList = "button expanded";
+            addButtonEl.textContent = getHistory[i].city;
+            addButtonEl.setAttribute("id", i);
+            searchHistoryButtonsEl.appendChild(addButtonEl);
+        }
+    }
+}
+
+var clearCitiesHandler = function () {
+    localStorage.removeItem("search-history");
+    location.reload();
+}
+
+// globally call load page function 
+loadPage();
+
+// event listener for submit click (user input)
+// event listener for favorites click
+// event listener for search history click
 searchForm.addEventListener("submit", getUserInput)
+searchHistoryButtonsEl.addEventListener("click", loadFromButton);
+clearCitiesButton.addEventListener("click", clearCitiesHandler)
