@@ -2,8 +2,8 @@ var searchForm = document.querySelector("#search-form");
 var cityUserInputEl = document.querySelector("#city-input");
 var invalidCity = document.getElementById("invalid-city");
 var columnTwoEl = document.querySelector("#column-two");
-var foodFilter = document.getElementById("food-filter").value;
-var eventFilter = document.getElementById("event-filter").value;
+var foodFilter;
+var eventFilter;
 var clearCitiesButton = document.getElementById("clear-cities");
 var restOneIdx = 0;
 var restTwoIdx = 0;
@@ -11,6 +11,8 @@ var eventOneIdx = 0;
 var eventTwoIdx = 0;
 var mapScriptContainer = document.getElementById('map-script-container');
 var searchHistoryButtonsEl = document.querySelector("#search-history-buttons");
+var foodFilterEl = document.getElementById("food-filter");
+var eventFilterEl = document.getElementById("event-filter");
 
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 // ----- Global Variables ----- //
@@ -29,6 +31,7 @@ var cityData = {
     }
 };
 var restData = {
+    foodFilter: " ",
     restOne: {
         restName: "",
         lat: "",
@@ -43,6 +46,7 @@ var restData = {
     }
 };
 var attractData = {
+    eventFilter: " ",
     eventOne: {
         eventName: "",
         lat: "",
@@ -154,14 +158,15 @@ function restaurants() {
             return response.json();
         })
         .then(data => {
-
             // Food Filter
-            var key = foodFilter;
+            var key = restData.foodFilter;
             var arrFiltered = [];
 
             // if there is a filter then run the for loop below
             if (key !== " ") {
+                console.log(key);
                 // loops through cuisine data to find filter
+                // debugger;
                 for (var i = 0; i < data.data.length; i++) {
                     if (data.data[i].name) {
                         for (var j = 0; j < data.data[i].cuisine.length; j++) {
@@ -247,7 +252,7 @@ function attractions() {
         .then(data => {
 
             // event filter
-            var key = eventFilter;
+            var key = attractData.eventFilter;
             var arrFiltered2 = [];
 
             // if there is a filter then run the for loop below
@@ -305,9 +310,9 @@ function attractions() {
             }
 
             console.log(arrFiltered2);
-            // createMap();
-            // displayItinerary();
             generateItinerary();
+            createMap();
+            // displayItinerary();
         })
         .catch(err => {
             console.log(err);
@@ -405,7 +410,7 @@ function generateItinerary() {
 
     var itineraryObject = { "city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray };
 
-    // displayItinerary(itineraryObject);
+    displayItinerary(itineraryObject);
     saveHistory(itineraryObject);
 }
 // ------------------------------------------------------------------------------------------------------------------------------------- //
@@ -539,14 +544,7 @@ function displayItinerary(displayObject) {
         columnTwoEl.appendChild(cardEl);
     }
 
-    restData.restOne.lon = displayObject.long[0];
-    restData.restOne.lat = displayObject.lat[0];
-    restData.restTwo.lon = displayObject.long[2];
-    restData.restTwo.lat = displayObject.lat[2];
-    attractData.eventOne.lon = displayObject.long[1];
-    attractData.eventOne.lat = displayObject.lat[1];
-    attractData.eventTwo.lon = displayObject.long[3];
-    attractData.eventTwo.lat = displayObject.lat[3];
+
 
 }
 
@@ -559,19 +557,22 @@ function displayItinerary(displayObject) {
 function loadFromButton(event) {
     // pulls in previously saved data
     var searchHistory = JSON.parse(localStorage.getItem("search-history"));
-
-    var buttonIndex = searchHistory.length - 1;
-    if (event) {
-        buttonIndex = event.target.id;
-        console.log("event triggered");
-    }
-
+    var buttonIndex = event.target.id;
     var currentLoad = searchHistory[buttonIndex];
+
+    restData.restOne.lon = displayObject.long[0];
+    restData.restOne.lat = displayObject.lat[0];
+    restData.restTwo.lon = displayObject.long[2];
+    restData.restTwo.lat = displayObject.lat[2];
+    attractData.eventOne.lon = displayObject.long[1];
+    attractData.eventOne.lat = displayObject.lat[1];
+    attractData.eventTwo.lon = displayObject.long[3];
+    attractData.eventTwo.lat = displayObject.lat[3]; w
 
     //    var itineraryObject = {"city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray};
 
     displayItinerary(currentLoad);
-    createMap();
+    // createMap();
 
 
 }
@@ -599,7 +600,7 @@ function saveHistory(saveObject) {
     searchHistory.push(saveObject);
     localStorage.setItem("search-history", JSON.stringify(searchHistory));
     // window.location.reload();
-    loadFromButton();
+    // loadFromButton();
 
 }
 
@@ -639,9 +640,19 @@ var clearCitiesHandler = function () {
 // globally call load page function 
 loadPage();
 
+function updateFoodFilter() {
+    restData.foodFilter = document.getElementById("food-filter").value;
+}
+
+function updateEventFilter() {
+    attractData.eventFilter = document.getElementById("event-filter").value;
+}
+
 // event listener for submit click (user input)
 // event listener for favorites click
 // event listener for search history click
 searchForm.addEventListener("submit", getUserInput)
 searchHistoryButtonsEl.addEventListener("click", loadFromButton);
-clearCitiesButton.addEventListener("click", clearCitiesHandler)
+clearCitiesButton.addEventListener("click", clearCitiesHandler);
+foodFilterEl.addEventListener("change", updateFoodFilter);
+eventFilterEl.addEventListener("change", updateEventFilter);
