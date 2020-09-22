@@ -2,8 +2,8 @@ var searchForm = document.querySelector("#search-form");
 var cityUserInputEl = document.querySelector("#city-input");
 var invalidCity = document.getElementById("invalid-city");
 var columnTwoEl = document.querySelector("#column-two");
-var foodFilter = document.getElementById("food-filter").value;
-var eventFilter = document.getElementById("event-filter").value;
+var foodFilterEl = document.getElementById("food-filter");
+var eventFilterEl = document.getElementById("event-filter");
 var clearCitiesButton = document.getElementById("clear-cities");
 var restOneIdx = 0;
 var restTwoIdx = 0;
@@ -80,6 +80,8 @@ function getUserInput(event) {
 
     // grab user input
     cityData.userInput.searchTerm = cityUserInputEl.value.toLowerCase();
+    cityData.userInput.restFilter = foodFilterEl.value;
+    cityData.userInput.attractFilter = eventFilterEl.value;
 
     // reset input field
     searchForm.reset();
@@ -156,11 +158,12 @@ function restaurants() {
         .then(data => {
 
             // Food Filter
-            var key = foodFilter;
+            var key = cityData.userInput.restFilter;
             var arrFiltered = [];
 
             // if there is a filter then run the for loop below
             if (key !== " ") {
+                console.log("in here");
                 // loops through cuisine data to find filter
                 for (var i = 0; i < data.data.length; i++) {
                     if (data.data[i].name) {
@@ -173,11 +176,13 @@ function restaurants() {
                 }
                 // checks if there's more then one in the array then filter
                 if (arrFiltered.length > 1) {
+                    console.log("less th");
                     while (restOneIdx === restTwoIdx) {
                         restOneIdx = randomNumber(0, arrFiltered.length);
                         restTwoIdx = randomNumber(0, arrFiltered.length);
                     }
                 }
+                console.log(arrFiltered);
                 // updates restaurant information
                 restData.restOne.lon = arrFiltered[restOneIdx].longitude;
                 restData.restOne.lat = arrFiltered[restOneIdx].latitude;
@@ -247,7 +252,7 @@ function attractions() {
         .then(data => {
 
             // event filter
-            var key = eventFilter;
+            var key = cityData.userInput.attractFilter;
             var arrFiltered2 = [];
 
             // if there is a filter then run the for loop below
