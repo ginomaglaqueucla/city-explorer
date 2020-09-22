@@ -160,6 +160,7 @@ function restaurants() {
             // Food Filter
             var key = cityData.userInput.restFilter;
             var arrFiltered = [];
+            console.log(data);
 
             // if there is a filter then run the for loop below
             if (key !== " ") {
@@ -169,6 +170,7 @@ function restaurants() {
                     if (data.data[i].name) {
                         for (var j = 0; j < data.data[i].cuisine.length; j++) {
                             if (data.data[i].cuisine[j].name === key) {
+                                console.log(data.data[i].cuisine[j].name);
                                 arrFiltered.push(data.data[i]);
                             }
                         }
@@ -176,7 +178,6 @@ function restaurants() {
                 }
                 // checks if there's more then one in the array then filter
                 if (arrFiltered.length > 1) {
-                    console.log("less th");
                     while (restOneIdx === restTwoIdx) {
                         restOneIdx = randomNumber(0, arrFiltered.length);
                         restTwoIdx = randomNumber(0, arrFiltered.length);
