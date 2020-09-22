@@ -182,6 +182,18 @@ function restaurants() {
                         restOneIdx = randomNumber(0, arrFiltered.length);
                         restTwoIdx = randomNumber(0, arrFiltered.length);
                     }
+                } else {
+                    for (var i = 0; i < data.data.length; i++) {
+                        if (data.data[i].name) {
+                            arrFiltered.push(data.data[i]);
+                        }
+                    }
+                    if (arrFiltered.length > 1) {
+                        while (restOneIdx === restTwoIdx) {
+                            restOneIdx = randomNumber(0, arrFiltered.length);
+                            restTwoIdx = randomNumber(0, arrFiltered.length);
+                        }
+                    }
                 }
                 console.log(arrFiltered);
                 // updates restaurant information
@@ -274,15 +286,25 @@ function attractions() {
                         eventOneIdx = randomNumber(0, arrFiltered2.length);
                         eventTwoIdx = randomNumber(0, arrFiltered2.length);
                     }
+                } else {
+                    for (var i = 0; i < data.data.length; i++) {
+                        arrFiltered2.push(data.data[i]);
+                    }
+                    if (arrFiltered2.length > 1) {
+                        while (eventOneIdx === eventTwoIdx) {
+                            eventOneIdx = randomNumber(0, arrFiltered2.length);
+                            eventTwoIdx = randomNumber(0, arrFiltered2.length);
+                        }
+                    }
                 }
                 // updates event information
                 attractData.eventOne.lon = arrFiltered2[eventOneIdx].longitude;
                 attractData.eventOne.lat = arrFiltered2[eventOneIdx].latitude;
-                attractData.eventOne.restName = arrFiltered2[eventOneIdx].name;
+                attractData.eventOne.eventName = arrFiltered2[eventOneIdx].name;
                 attractData.eventOne.url = arrFiltered2[eventOneIdx].web_url;
                 attractData.eventTwo.lon = arrFiltered2[eventTwoIdx].longitude;
                 attractData.eventTwo.lat = arrFiltered2[eventTwoIdx].latitude;
-                attractData.eventTwo.restName = arrFiltered2[eventTwoIdx].name;
+                attractData.eventTwo.eventName = arrFiltered2[eventTwoIdx].name;
                 attractData.eventTwo.url = arrFiltered2[eventTwoIdx].web_url;
             }
             // else search all options 
@@ -500,8 +522,16 @@ function displayItinerary(displayObject) {
         columnTwoEl.appendChild(cardEl);
     }
 
+    restData.restOne.lon = displayObject.long[0];
+    restData.restOne.lat = displayObject.lat[0];
+    restData.restTwo.lon = displayObject.long[2];
+    restData.restTwo.lat = displayObject.lat[2];
+    attractData.eventOne.lon = displayObject.long[1];
+    attractData.eventOne.lat = displayObject.lat[1];
+    attractData.eventTwo.lon = displayObject.long[3];
+    attractData.eventTwo.lat = displayObject.lat[3];
 
-
+    createMap();
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
@@ -513,23 +543,8 @@ function displayItinerary(displayObject) {
 function loadFromButton(event) {
     // pulls in previously saved data
     var searchHistory = JSON.parse(localStorage.getItem("search-history"));
-
-
-
     var buttonIndex = event.target.id;
-
-
-
     var currentLoad = searchHistory[buttonIndex];
-
-    restData.restOne.lon = displayObject.long[0];
-    restData.restOne.lat = displayObject.lat[0];
-    restData.restTwo.lon = displayObject.long[2];
-    restData.restTwo.lat = displayObject.lat[2];
-    attractData.eventOne.lon = displayObject.long[1];
-    attractData.eventOne.lat = displayObject.lat[1];
-    attractData.eventTwo.lon = displayObject.long[3];
-    attractData.eventTwo.lat = displayObject.lat[3]; w
 
     //    var itineraryObject = {"city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray};
 
