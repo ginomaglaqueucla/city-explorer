@@ -356,7 +356,6 @@ function createMap() {
         $('head').children('style').remove();
     }
 
-    debugger;
     // Create the script tag, set the appropriate attributes
     var script = document.createElement('script');
     script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap';
