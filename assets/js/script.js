@@ -176,25 +176,19 @@ function restaurants() {
                         }
                     }
                 }
-                // checks if there's more then one in the array then filter
-                if (arrFiltered.length > 1) {
-                    while (restOneIdx === restTwoIdx) {
-                        restOneIdx = randomNumber(0, arrFiltered.length);
-                        restTwoIdx = randomNumber(0, arrFiltered.length);
-                    }
-                } else {
+
+                if (arrFiltered.length <= 1) {
                     for (var i = 0; i < data.data.length; i++) {
                         if (data.data[i].name) {
                             arrFiltered.push(data.data[i]);
                         }
                     }
-                    if (arrFiltered.length > 1) {
-                        while (restOneIdx === restTwoIdx) {
-                            restOneIdx = randomNumber(0, arrFiltered.length);
-                            restTwoIdx = randomNumber(0, arrFiltered.length);
-                        }
-                    }
                 }
+                while (restOneIdx === restTwoIdx) {
+                    restOneIdx = randomNumber(0, arrFiltered.length);
+                    restTwoIdx = randomNumber(0, arrFiltered.length);
+                }
+
                 console.log(arrFiltered);
                 // updates restaurant information
                 restData.restOne.lon = arrFiltered[restOneIdx].longitude;
@@ -280,23 +274,18 @@ function attractions() {
                         }
                     }
                 }
-                // checks if there's more then one in the array then filter
-                if (arrFiltered2.length > 1) {
-                    while (eventOneIdx === eventTwoIdx) {
-                        eventOneIdx = randomNumber(0, arrFiltered2.length);
-                        eventTwoIdx = randomNumber(0, arrFiltered2.length);
-                    }
-                } else {
+
+                if (arrFiltered2 <= 1) {
                     for (var i = 0; i < data.data.length; i++) {
                         arrFiltered2.push(data.data[i]);
                     }
-                    if (arrFiltered2.length > 1) {
-                        while (eventOneIdx === eventTwoIdx) {
-                            eventOneIdx = randomNumber(0, arrFiltered2.length);
-                            eventTwoIdx = randomNumber(0, arrFiltered2.length);
-                        }
-                    }
                 }
+
+                while (eventOneIdx === eventTwoIdx) {
+                    eventOneIdx = randomNumber(0, arrFiltered2.length);
+                    eventTwoIdx = randomNumber(0, arrFiltered2.length);
+                }
+
                 // updates event information
                 attractData.eventOne.lon = arrFiltered2[eventOneIdx].longitude;
                 attractData.eventOne.lat = arrFiltered2[eventOneIdx].latitude;
@@ -333,7 +322,7 @@ function attractions() {
             }
 
             console.log(arrFiltered2);
-            createMap();
+            initMap();
             // displayItinerary();
             generateItinerary();
         })
@@ -348,72 +337,81 @@ function attractions() {
 // dependent on completion of geocCoding & trip advisory data fetch
 // in the future will take in data structure as parameter
 // assign map data to data structure 
-function createMap() {
-    // clear out old script if there is some
-    if (document.getElementById("google-maps-api")) {
-        document.getElementById("google-maps-api").remove();
-        $('head').children('script').remove();
-        $('head').children('style').remove();
+
+window.initMap = function () {
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+
+    if (!cityData.cityCoord.lat || !cityData.cityCoord.lon) {
+        console.log("in here");
+        return;
     }
 
-    // Create the script tag, set the appropriate attributes
-    var script = document.createElement('script');
-    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap';
-    script.defer = true;
-    script.id = "google-maps-api";
+    // location variable to store lat/lng
+    var location = { lat: cityData.cityCoord.lat, lng: cityData.cityCoord.lon };
 
-    // initates function to create google map
-    window.initMap = function () {
-        const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer();
+    // create map
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: location,
+        zoom: 12
+    });
 
-        // location variable to store lat/lng
-        var location = { lat: cityData.cityCoord.lat, lng: cityData.cityCoord.lon };
+    directionsRenderer.setMap(map);
+    calculateAndDisplayRoute(directionsService, directionsRenderer);
+};
 
-        // create map
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: location,
-            zoom: 12
-        });
+// calculates and displays route on google maps
+function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+    restData.restOne.lon = restData.restOne.lon.toString();
+    restData.restOne.lat = restData.restOne.lat.toString();
+    restData.restTwo.lon = restData.restTwo.lon.toString();
+    restData.restTwo.lat = restData.restTwo.lat.toString();
 
-        directionsRenderer.setMap(map);
-        calculateAndDisplayRoute(directionsService, directionsRenderer);
-    };
+    attractData.eventOne.lon = attractData.eventOne.lon.toString();
+    attractData.eventOne.lat = attractData.eventOne.lat.toString();
+    attractData.eventTwo.lon = attractData.eventTwo.lon.toString();
+    attractData.eventTwo.lat = attractData.eventTwo.lat.toString();
 
-    // Append the 'script' element to 'head'
-    mapScriptContainer.appendChild(script);
+    directionsService.route(
+        {
+            origin: restData.restOne.lat + ", " + restData.restOne.lon,
+            destination: attractData.eventOne.lat + ", " + attractData.eventOne.lon,
+            waypoints: [{ location: restData.restTwo.lat + ", " + restData.restTwo.lon }, { location: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon }],
 
-    // calculates and displays route on google maps
-    function calculateAndDisplayRoute(directionsService, directionsRenderer) {
-        restData.restOne.lon = restData.restOne.lon.toString();
-        restData.restOne.lat = restData.restOne.lat.toString();
-        restData.restTwo.lon = restData.restTwo.lon.toString();
-        restData.restTwo.lat = restData.restTwo.lat.toString();
-
-        attractData.eventOne.lon = attractData.eventOne.lon.toString();
-        attractData.eventOne.lat = attractData.eventOne.lat.toString();
-        attractData.eventTwo.lon = attractData.eventTwo.lon.toString();
-        attractData.eventTwo.lat = attractData.eventTwo.lat.toString();
-
-        directionsService.route(
-            {
-                origin: restData.restOne.lat + ", " + restData.restOne.lon,
-                destination: attractData.eventOne.lat + ", " + attractData.eventOne.lon,
-                waypoints: [{ location: restData.restTwo.lat + ", " + restData.restTwo.lon }, { location: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon }],
-
-                travelMode: google.maps.TravelMode.DRIVING
-            },
-            (response, status) => {
-                if (status === "OK") {
-                    directionsRenderer.setDirections(response);
-                } else {
-                    window.alert("Directions request failed due to " + status);
-                }
+            travelMode: google.maps.TravelMode.DRIVING
+        },
+        (response, status) => {
+            if (status === "OK") {
+                directionsRenderer.setDirections(response);
+            } else {
+                window.alert("Directions request failed due to " + status);
             }
-        );
-    }
-
+        }
+    );
 }
+
+// function createMap() {
+// clear out old script if there is some
+// if (document.getElementById("google-maps-api")) {
+//     document.getElementById("google-maps-api").remove();
+//     $('head').children('script').remove();
+//     $('head').children('style').addClass("google-style-api");
+// $('.google-style-api').remove();
+// }
+
+// Create the script tag, set the appropriate attributes
+// var script = document.createElement('script');
+// script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap';
+// script.defer = false;
+// script.id = "google-maps-api";
+
+// Append the 'script' element to 'head'
+// mapScriptContainer.appendChild(script);
+
+// initates function to create google map
+
+
+// }
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
 
@@ -433,7 +431,10 @@ function generateItinerary() {
     var latArray = [restData.restOne.lat, attractData.eventOne.lat, restData.restTwo.lat, attractData.eventTwo.lat];
     var lonArray = [restData.restOne.lon, attractData.eventOne.lon, restData.restTwo.lon, attractData.eventTwo.lon];
 
-    var itineraryObject = { "city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray };
+    var itineraryObject = {
+        "city": displayCity, "cityLat": cityLatCoord, "cityLong": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray,
+        "long": lonArray, "restData": restData, "cityData": cityData, "attractData": attractData
+    };
 
     displayItinerary(itineraryObject);
     saveHistory(itineraryObject);
@@ -532,8 +533,10 @@ function displayItinerary(displayObject) {
     attractData.eventOne.lat = displayObject.lat[1];
     attractData.eventTwo.lon = displayObject.long[3];
     attractData.eventTwo.lat = displayObject.lat[3];
+    cityData.cityCoord.lat = displayObject.cityLat;
+    cityData.cityCoord.lon = displayObject.cityLong;
 
-    createMap();
+    initMap();
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
@@ -551,9 +554,8 @@ function loadFromButton(event) {
     //    var itineraryObject = {"city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray};
 
     displayItinerary(currentLoad);
+
     // createMap();
-
-
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
