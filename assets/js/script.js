@@ -190,6 +190,7 @@ function restaurants() {
                 }
 
                 console.log(arrFiltered);
+
                 // updates restaurant information
                 restData.restOne.lon = arrFiltered[restOneIdx].longitude;
                 restData.restOne.lat = arrFiltered[restOneIdx].latitude;
@@ -274,7 +275,6 @@ function attractions() {
                         }
                     }
                 }
-
                 if (arrFiltered2 <= 1) {
                     for (var i = 0; i < data.data.length; i++) {
                         arrFiltered2.push(data.data[i]);
@@ -455,8 +455,23 @@ function generateItinerary() {
 // ------ load page  ------ //
 // this function will load the static homepage
 // this function will get local storage (favorites & search history) and display onto page
-// ------------------------------------------------------------------------------------------------------------------------------------- //
 
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+function generateItinerary() {
+    var displayCity = cityData.userInput.searchTerm.toUpperCase();
+    var cityLatCoord = cityData.cityCoord.lat;
+    var cityLonCoord = cityData.cityCoord.lon;
+    var wayPointArray = ["A", "B", "C", "D"];
+    var placeArray = [restData.restOne.restName, attractData.eventOne.eventName, restData.restTwo.restName, attractData.eventTwo.eventName];
+    var urlArray = [restData.restOne.url, attractData.eventOne.url, restData.restTwo.url, attractData.eventTwo.url];
+    var latArray = [restData.restOne.lat, attractData.eventOne.lat, restData.restTwo.lat, attractData.eventTwo.lat];
+    var lonArray = [restData.restOne.lon, attractData.eventOne.lon, restData.restTwo.lon, attractData.eventTwo.lon];
+
+    var itineraryObject = {"city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray};
+
+    displayItinerary(itineraryObject);
+    saveHistory(itineraryObject);
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ display Itinerary  ------ //
@@ -469,8 +484,6 @@ function generateItinerary() {
 // create algorithm logic to identify if this function was called from a favorite click, search click, or submit click
 // in the future error handle to exclude already generated restaurants/attractions ?
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-
-
 
 // globally call load page function 
 
@@ -489,6 +502,7 @@ function generateItinerary() {
 // create algorithm logic to identify if this function was called from a favorite click, search click, or submit click
 // in the future error handle to exclude already generated restaurants/attractions ?
 // ------------------------------------------------------------------------------------------------------------------------------------- //
+
 function displayItinerary(displayObject) {
 
     // clear old data
