@@ -22,7 +22,7 @@
         <div class="grid-x grid-margin-x grid-margin-y container">
 
             <!--column 1: city input, food pull-down, event pull-down, saved itineraries-->
-            <div class="cell small-12 medium-4">
+            <div class="cell small-12 medium-2">
 
                 <!--column 1 wrapper-->
                 <div class="column-1">
@@ -30,15 +30,18 @@
                     <!--search input area-->
                     <form id="search-form" class="search-form">
                         <p id="invalid-city" class="invalid-search hide">not a valid city</p>
-                        <label>Search by City:</label>
-                        <input id="city-input" class="city-input">
+                        <label>Search by City, State</br>(2 Letter Code):</label>
+                        <input id="city-input" class="city-input" placeholder="ex. Los Angeles, CA">
                         <button id="search-button" class="search-button">
                             <i class="fas fa-search"></i>
+                        </button>
+                        <button type="button" id="clear-cities">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </form>
 
                     <!--food options pull-down-->
-                    <label>Type of Food // this shows the non-multi-select version
+                    <label>Type of Food
                         <!--would be awesome if we could dynamically create the options-->
                         <select id="food-filter">
                             <option value=" ">Surprise Me!</option>
@@ -51,7 +54,7 @@
                     </label>
 
                     <!--event options pull-down-->
-                    <label>Type of Event // this shows the multi-select version
+                    <label>Type of Event
                         <!--would be awesome if we could dynamically create the options-->
                         <select id="event-filter">
                             <option value=" ">Surprise Me!</option>
@@ -73,12 +76,13 @@
             <div id="column-two" class="cell small-12 medium-4"></div>
 
             <!--column 3: map area that shows the directions from place to place-->
-            <div class="cell small-12 medium-4">
+            <div class="cell small-12 medium-6">
 
                 <!--column 3 wrapper-->
-                <!-- <div class="column-3">
-
-                    <div id="map-area" class="card map-area"> -->
+                <!-- <div class="column-3" id="map-container"> -->
+                <div id="map"></div>
+                <!-- </div> -->
+                <!-- <div id="map-area" class="card map-area"> -->
 
                 <!--hard code start-->
                 <!--delete all hard coded code and text when functionality has been added.-->
@@ -88,12 +92,12 @@
                         </div> -->
                 <!--pseudo-code for adding an image-->
                 <!-- <img id="map-pic" src="assets/images/google_map_pic.png"> -->
-                <div id="map"></div>
+
                 <!--class of "card-section" needs to be applied to create a text section in the Foundation card-->
                 <!-- <div class="card-section">
                             Do we want any text, such as the written directions, under the Google Map?
-                        </div> -->
-                <!--hard code end-->
+                </div>
+                ard code end-->
 
                 <!-- </div> -->
 
@@ -102,10 +106,12 @@
             </div>
         </div>
     </main>
-
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://use.fontawesome.com/releases/v5.14.0/js/all.js" data-auto-replace-svg="nest"></script>
+    <!-- <div id="map-script-container"></div> -->
     <script src="./assets/js/script.js"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap"></script>
 </body>
 
 </html>
