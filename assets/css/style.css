@@ -4,6 +4,10 @@
     --border-color: black;
 }
 
+body{
+    
+}
+
 .hero {
     background-color: var(--background-color);
     color: var(--background-text);
@@ -14,6 +18,7 @@
 
 .title {
     margin-top: 5px;
+    font-weight: bold;
 }
 
 .container {
@@ -39,7 +44,7 @@
     border-style: solid;
     padding: 5px;
     font-size: 20px;
-    margin-left: -4px;
+    /* margin-left: -4px; */
 }
 
 .saved-itinerary {
@@ -76,6 +81,14 @@
 .invalid-search {
     border: solid red;
     display: block;
+    padding: 0;
+    margin: 0;
+    background-color: red;
+    color: white;
+}
+
+#clear-cities{
+    padding-left: 5px;
 }
 
 /* Always set the map height explicitly to define the size of the div element that contains the map. */
