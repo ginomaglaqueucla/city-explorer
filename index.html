@@ -7,6 +7,7 @@
     <!-- Compressed CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/css/foundation.min.css"
         integrity="sha256-ogmFxjqiTMnZhxCqVmcqTvjfe1Y/ec4WaRj/aQPvn+I=" crossorigin="anonymous">
+    <div id="map-script-container"></div>
     <link rel="stylesheet" href="./assets/css/style.css">
     <title>City Explorer</title>
 </head>
@@ -28,14 +29,11 @@
 
                     <!--search input area-->
                     <form id="search-form" class="search-form">
-                        <p id="invalid-city" class="invalid-search hide">not a valid city</p>
                         <label>Search by City, State</br>(2 Letter Code):</label>
+                        <p id="invalid-city" class="invalid-search hide">Not a valid city or improper format</p>
                         <input id="city-input" class="city-input" placeholder="ex. Los Angeles, CA">
                         <button id="search-button" class="search-button">
                             <i class="fas fa-search"></i>
-                        </button>
-                        <button type="button" id="clear-cities">
-                            <i class="fas fa-trash"></i>
                         </button>
                     </form>
 
@@ -61,7 +59,12 @@
                     </label>
 
                     <!--saved itinerary area-->
-                    <div class="save-area">
+                    <div>
+                        <h3 id="history-title">
+                            <button type="button" id="clear-cities"></button>
+                        </h3>
+                    </div>
+                    <div class="save-area" id="save-area">
                         <ul id="search-history-buttons" class="saved-itinerary"></ul>
                     </div>
 

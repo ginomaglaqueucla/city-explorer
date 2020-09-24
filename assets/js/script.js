@@ -10,6 +10,8 @@ var restTwoIdx = 0;
 var eventOneIdx = 0;
 var eventTwoIdx = 0;
 var mapScriptContainer = document.getElementById('map-script-container');
+var historyHeaderEl = document.querySelector("#history-header");
+var historyTitleEl = document.querySelector("#history-title");
 var searchHistoryButtonsEl = document.querySelector("#search-history-buttons");
 
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
@@ -190,6 +192,7 @@ function restaurants() {
                 }
 
                 console.log(arrFiltered);
+
                 // updates restaurant information
                 restData.restOne.lon = arrFiltered[restOneIdx].longitude;
                 restData.restOne.lat = arrFiltered[restOneIdx].latitude;
@@ -210,7 +213,7 @@ function restaurants() {
                 }
                 // arrFiltered = data.data.filter(d => !d.name == false); ---> another way to filter
                 // stores restaurant data
-                if (arrFiltered.length > 1) {
+                if (arrFiltered.length >= 1) {
                     while (restOneIdx === restTwoIdx) {
                         restOneIdx = randomNumber(0, arrFiltered.length);
                         restTwoIdx = randomNumber(0, arrFiltered.length);
@@ -274,7 +277,6 @@ function attractions() {
                         }
                     }
                 }
-
                 if (arrFiltered2 <= 1) {
                     for (var i = 0; i < data.data.length; i++) {
                         arrFiltered2.push(data.data[i]);
@@ -303,7 +305,7 @@ function attractions() {
                     arrFiltered2.push(data.data[i]);
                 }
                 // checks if there's more then one in the array then filter
-                if (arrFiltered2.length > 1) {
+                if (arrFiltered2.length >= 1) {
                     while (eventOneIdx === eventTwoIdx) {
                         eventOneIdx = randomNumber(0, arrFiltered2.length);
                         eventTwoIdx = randomNumber(0, arrFiltered2.length);
@@ -421,24 +423,6 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 // the object includes the city name, waypoints, fetched restaurants/event locations, and respective urls
 // calls display Itinerary function
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-function generateItinerary() {
-    var displayCity = cityData.userInput.searchTerm.toUpperCase();
-    var cityLatCoord = cityData.cityCoord.lat;
-    var cityLonCoord = cityData.cityCoord.lon;
-    var wayPointArray = ["A", "B", "C", "D"];
-    var placeArray = [restData.restOne.restName, attractData.eventOne.eventName, restData.restTwo.restName, attractData.eventTwo.eventName];
-    var urlArray = [restData.restOne.url, attractData.eventOne.url, restData.restTwo.url, attractData.eventTwo.url];
-    var latArray = [restData.restOne.lat, attractData.eventOne.lat, restData.restTwo.lat, attractData.eventTwo.lat];
-    var lonArray = [restData.restOne.lon, attractData.eventOne.lon, restData.restTwo.lon, attractData.eventTwo.lon];
-
-    var itineraryObject = {
-        "city": displayCity, "cityLat": cityLatCoord, "cityLong": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray,
-        "long": lonArray, "restData": restData, "cityData": cityData, "attractData": attractData
-    };
-
-    displayItinerary(itineraryObject);
-    saveHistory(itineraryObject);
-}
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 
 
@@ -455,8 +439,23 @@ function generateItinerary() {
 // ------ load page  ------ //
 // this function will load the static homepage
 // this function will get local storage (favorites & search history) and display onto page
-// ------------------------------------------------------------------------------------------------------------------------------------- //
 
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+function generateItinerary() {
+    var displayCity = cityData.userInput.searchTerm.toUpperCase();
+    var cityLatCoord = cityData.cityCoord.lat;
+    var cityLonCoord = cityData.cityCoord.lon;
+    var wayPointArray = ["A", "B", "C", "D"];
+    var placeArray = [restData.restOne.restName, attractData.eventOne.eventName, restData.restTwo.restName, attractData.eventTwo.eventName];
+    var urlArray = [restData.restOne.url, attractData.eventOne.url, restData.restTwo.url, attractData.eventTwo.url];
+    var latArray = [restData.restOne.lat, attractData.eventOne.lat, restData.restTwo.lat, attractData.eventTwo.lat];
+    var lonArray = [restData.restOne.lon, attractData.eventOne.lon, restData.restTwo.lon, attractData.eventTwo.lon];
+
+    var itineraryObject = {"city": displayCity, "cityLat": cityLatCoord, "cityLong": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray};
+
+    displayItinerary(itineraryObject);
+    saveHistory(itineraryObject);
+}
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ display Itinerary  ------ //
@@ -469,8 +468,6 @@ function generateItinerary() {
 // create algorithm logic to identify if this function was called from a favorite click, search click, or submit click
 // in the future error handle to exclude already generated restaurants/attractions ?
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-
-
 
 // globally call load page function 
 
@@ -489,6 +486,7 @@ function generateItinerary() {
 // create algorithm logic to identify if this function was called from a favorite click, search click, or submit click
 // in the future error handle to exclude already generated restaurants/attractions ?
 // ------------------------------------------------------------------------------------------------------------------------------------- //
+
 function displayItinerary(displayObject) {
 
     // clear old data
@@ -568,6 +566,11 @@ function saveHistory(saveObject) {
     // pulls in previously saved data
     var searchHistory = JSON.parse(localStorage.getItem("search-history"));
 
+    // displays search history header and button -------------------------------------
+    historyTitleEl.textContent = "Search History";
+    clearCitiesButton.innerHTML = "<i class='fas fa-trash'></i>"
+    historyTitleEl.appendChild(clearCitiesButton);
+
     // creates button ----------------------------------------------------------------
     var buttonEl = document.createElement("button");
     buttonEl.classList = "button expanded";
@@ -602,6 +605,10 @@ function loadPage() {
         console.log("there is no history");
     }
     else {
+        console.log(getHistory.length);
+        historyTitleEl.textContent = "Search History";
+        clearCitiesButton.innerHTML = "<i class='fas fa-trash'></i>"
+        historyTitleEl.appendChild(clearCitiesButton);
         for (var i = 0; i < getHistory.length; i++) {
             // create buttons to display search history
             var addButtonEl = document.createElement("button");
