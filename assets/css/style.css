@@ -2,10 +2,9 @@
     --background-color: #ffbe76;
     --background-text: white;
     --border-color: black;
-}
-
-body{
-    
+    --inner-color: #F8F8FF;
+    --button-color: #30336b;
+    --hover-color: #6495ED;
 }
 
 .hero {
@@ -38,13 +37,18 @@ body{
 }
 
 .search-button {
-    background-color: #33BDFF;
+    background-color: var(--button-color);
     color: var(--background-text);
     border-radius: 3px;
     border-style: solid;
+    border-width: 1px;
     padding: 5px;
     font-size: 20px;
-    /* margin-left: -4px; */
+    margin-left: -4px;
+}
+
+.search-button:hover {
+    background-color: var(--hover-color);
 }
 
 .saved-itinerary {
@@ -87,8 +91,25 @@ body{
     color: white;
 }
 
-#clear-cities{
-    padding-left: 5px;
+#clear-cities {
+    background-color: var(--button-color);
+    color: var(--background-text);
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    padding: 5px;
+    font-size: 30px;
+    margin-left: -4px;
+}
+
+#clear-cities:hover {
+    background-color: var(--hover-color);
+}
+
+#food-filter,
+#event-filter {
+    background-color: var(--inner-color);
 }
 
 /* Always set the map height explicitly to define the size of the div element that contains the map. */
@@ -97,6 +118,7 @@ body{
     width: 100%;
     padding: 0;
     margin: 0;
+    border-radius: 5px;
 }
 
 /* Optional: Makes the sample page fill the window. */
@@ -115,8 +137,12 @@ main {
 }
 
 .button {
-    background-color: #30336b;
+    background-color: var(--button-color);
     border-radius: 5px;
+}
+
+#itinerary-list {
+    background-color: var(--inner-color);
 }
 
 #itinerary-title {
