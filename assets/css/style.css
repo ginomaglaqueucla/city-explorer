@@ -1,5 +1,5 @@
 :root {
-    --background-color: grey;
+    --background-color: #ffbe76;
     --background-text: white;
     --border-color: black;
 }
@@ -9,6 +9,7 @@
     color: var(--background-text);
     display: flex;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
 .title {
@@ -16,7 +17,6 @@
 }
 
 .container {
-    margin-top: 5px;
     margin-left: 10px;
     margin-right: 10px;
 }
@@ -49,15 +49,16 @@
 
 .event {
     width: 100%;
-    background-color: var(--background-color);
+    background-color: #30336b;
     color: var(--background-text);
     border-radius: 3px;
     border-style: solid;
     border-width: 1px;
-    padding: 5px 0;
+    padding: 5px;
     font-weight: bold;
     font-size: 24px;
     margin-top: 5px;
+    text-align: left;
 }
 
 .itinerary {
@@ -68,10 +69,19 @@
     border-radius: 10px;
 }
 
+.hide {
+    display:none;
+}
+
+.invalid-search {
+    border: solid red;
+    display: block;
+}
+
 /* Always set the map height explicitly to define the size of the div element that contains the map. */
 #map {
-    height: 50%;
-    width: 50%;
+    height: 100%;
+    width: 100%;
     padding: 0;
     margin: 0;
 }
@@ -83,4 +93,19 @@ main {
     height: 100%;
     padding: 0;
     margin: 0;
+}
+
+main {
+    background-color: #f6e58d;
+}
+
+.button {
+    background-color: #30336b;
+}
+
+#itinerary-title {
+    background-color: #ffbe76;
+    color: white;
+    font-weight: 400;
+    font-size: 20px;
 }
