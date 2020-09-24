@@ -98,10 +98,12 @@ main {
 main {
     background-color: #f6e58d;
     height: auto;
+    min-height: 100vh;
 }
 
 .button {
     background-color: #30336b;
+    border-radius: 5px;
 }
 
 #itinerary-title {
