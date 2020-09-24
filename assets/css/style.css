@@ -2,6 +2,9 @@
     --background-color: #ffbe76;
     --background-text: white;
     --border-color: black;
+    --inner-color: #F8F8FF;
+    --button-color: #30336b;
+    --hover-color: #6495ED;
 }
 
 .hero {
@@ -21,6 +24,10 @@
     margin-right: 10px;
 }
 
+.column-1 {
+    display: block;
+}
+
 .search-form label {
     font-weight: bold;
     font-size: 20px;
@@ -33,13 +40,44 @@
 }
 
 .search-button {
-    background-color: #33BDFF;
+    background-color: var(--button-color);
     color: var(--background-text);
     border-radius: 3px;
     border-style: solid;
+    border-width: 1px;
     padding: 5px;
     font-size: 20px;
     margin-left: -4px;
+}
+
+.search-button:hover {
+    background-color: var(--hover-color);
+}
+
+#clear-cities {
+    background-color: var(--button-color);
+    color: var(--background-text);
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    padding: 5px;
+    font-size: 30px;
+    margin-left: -4px;
+    display: flex;
+}
+
+#clear-cities:hover {
+    background-color: var(--hover-color);
+}
+
+#food-filter,
+#event-filter {
+    background-color: var(--inner-color);
+}
+
+label {
+    font-weight: bold;
 }
 
 .saved-itinerary {
@@ -49,7 +87,7 @@
 
 .event {
     width: 100%;
-    background-color: #30336b;
+    background-color: var(--button-color);
     color: var(--background-text);
     border-radius: 3px;
     border-style: solid;
@@ -84,6 +122,7 @@
     width: 100%;
     padding: 0;
     margin: 0;
+    border-radius: 5px;
 }
 
 /* Optional: Makes the sample page fill the window. */
@@ -102,7 +141,7 @@ main {
 }
 
 .button {
-    background-color: #30336b;
+    background-color: var(--button-color);
     border-radius: 5px;
 }
 
@@ -111,6 +150,10 @@ main {
     color: white;
     font-weight: 400;
     font-size: 20px;
+}
+
+#itinerary-list {
+    background-color: var(--inner-color);
 }
 
 /* MEDIA QUERY FOR MOBILE PHONES AND SMALLER */
