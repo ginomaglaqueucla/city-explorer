@@ -1,3 +1,4 @@
+
 :root {
     --background-color: #ffbe76;
     --background-text: white;
@@ -97,6 +98,7 @@ main {
 
 main {
     background-color: #f6e58d;
+    height: auto;
 }
 
 .button {
@@ -108,4 +110,11 @@ main {
     color: white;
     font-weight: 400;
     font-size: 20px;
+}
+
+/* MEDIA QUERY FOR MOBILE PHONES AND SMALLER */
+@media screen and (max-width: 1023px) {
+    #map {
+        height: 400px;
+    }
 }

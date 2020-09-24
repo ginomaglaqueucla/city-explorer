@@ -5,10 +5,6 @@ var columnTwoEl = document.querySelector("#column-two");
 var foodFilterEl = document.getElementById("food-filter");
 var eventFilterEl = document.getElementById("event-filter");
 var clearCitiesButton = document.getElementById("clear-cities");
-var restOneIdx = 0;
-var restTwoIdx = 0;
-var eventOneIdx = 0;
-var eventTwoIdx = 0;
 var mapScriptContainer = document.getElementById('map-script-container');
 var searchHistoryButtonsEl = document.querySelector("#search-history-buttons");
 
@@ -159,23 +155,41 @@ function restaurants() {
 
             // Food Filter
             var key = cityData.userInput.restFilter;
+            switch (key) {
+                case "Italian":
+                    key = ['Italian', 'Pizza'];
+                    break;
+            }
+
             var arrFiltered = [];
             console.log(data);
+            var newData = data.data;
 
             // if there is a filter then run the for loop below
             if (key !== " ") {
-                console.log("in here");
                 // loops through cuisine data to find filter
-                for (var i = 0; i < data.data.length; i++) {
-                    if (data.data[i].name) {
-                        for (var j = 0; j < data.data[i].cuisine.length; j++) {
-                            if (data.data[i].cuisine[j].name === key) {
-                                console.log(data.data[i].cuisine[j].name);
-                                arrFiltered.push(data.data[i]);
+                // var index = 0;
+
+                // arrFiltered = newData.filter(d => d.cuisine.name.filter(c => key.filter(k => c === k)));
+
+                // while (arrFiltered.length <= 1 && index < key.length) {
+                for (var k = 0; k < key.length; k++) {
+                    for (var i = 0; i < newData.length; i++) {
+                        if (newData[i].name) {
+                            for (var j = 0; j < newData[i].cuisine.length; j++) {
+                                if (newData[i].cuisine[j].name === key[k]) {
+                                    console.log(newData[i].cuisine[j].name);
+                                    arrFiltered.push(newData[i]);
+                                    // newData = newData[i].filter(d => d.cuisine[j].name !== key[index]);
+                                }
                             }
                         }
                     }
+                    // index++;
                 }
+                // }
+                arrFiltered.filter((item, index) => arrFiltered.indexOf(item) === index);
+                // arrFiltered = [...new Set(arrFiltered)];
 
                 if (arrFiltered.length <= 1) {
                     for (var i = 0; i < data.data.length; i++) {
@@ -184,9 +198,13 @@ function restaurants() {
                         }
                     }
                 }
+
+                var restOneIdx = 0;
+                var restTwoIdx = 0;
+
                 while (restOneIdx === restTwoIdx) {
-                    restOneIdx = randomNumber(0, arrFiltered.length);
-                    restTwoIdx = randomNumber(0, arrFiltered.length);
+                    restOneIdx = randomNumber(0, arrFiltered.length - 1);
+                    restTwoIdx = randomNumber(0, arrFiltered.length - 1);
                 }
 
                 console.log(arrFiltered);
@@ -210,10 +228,13 @@ function restaurants() {
                 }
                 // arrFiltered = data.data.filter(d => !d.name == false); ---> another way to filter
                 // stores restaurant data
+                var restOneIdx = 0;
+                var restTwoIdx = 0;
+
                 if (arrFiltered.length > 1) {
                     while (restOneIdx === restTwoIdx) {
-                        restOneIdx = randomNumber(0, arrFiltered.length);
-                        restTwoIdx = randomNumber(0, arrFiltered.length);
+                        restOneIdx = randomNumber(0, arrFiltered.length - 1);
+                        restTwoIdx = randomNumber(0, arrFiltered.length - 1);
                     }
                 }
                 // updates restaurant information
@@ -266,7 +287,7 @@ function attractions() {
             if (key !== " ") {
                 // loops through subcategory data to find filter
                 for (var i = 0; i < data.data.length; i++) {
-                    if (data.data[i]) {
+                    if (data.data[i].subcategory) {
                         for (var j = 0; j < data.data[i].subcategory.length; j++) {
                             if (data.data[i].subcategory[j].name === key) {
                                 arrFiltered2.push(data.data[i]);
@@ -281,11 +302,16 @@ function attractions() {
                     }
                 }
 
+                var eventOneIdx = 0;
+                var eventTwoIdx = 0;
+
                 while (eventOneIdx === eventTwoIdx) {
-                    eventOneIdx = randomNumber(0, arrFiltered2.length);
-                    eventTwoIdx = randomNumber(0, arrFiltered2.length);
+                    eventOneIdx = randomNumber(0, arrFiltered2.length - 1);
+                    eventTwoIdx = randomNumber(0, arrFiltered2.length - 1);
                 }
 
+                console.log(eventOneIdx);
+                console.log(eventTwoIdx);
                 // updates event information
                 attractData.eventOne.lon = arrFiltered2[eventOneIdx].longitude;
                 attractData.eventOne.lat = arrFiltered2[eventOneIdx].latitude;
@@ -303,6 +329,9 @@ function attractions() {
                     arrFiltered2.push(data.data[i]);
                 }
                 // checks if there's more then one in the array then filter
+                var eventOneIdx = 0;
+                var eventTwoIdx = 0;
+
                 if (arrFiltered2.length > 1) {
                     while (eventOneIdx === eventTwoIdx) {
                         eventOneIdx = randomNumber(0, arrFiltered2.length);
