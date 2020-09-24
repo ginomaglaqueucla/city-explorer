@@ -97,10 +97,13 @@ main {
 
 main {
     background-color: #f6e58d;
+    height: auto;
+    min-height: 100vh;
 }
 
 .button {
     background-color: #30336b;
+    border-radius: 5px;
 }
 
 #itinerary-title {
@@ -108,4 +111,11 @@ main {
     color: white;
     font-weight: 400;
     font-size: 20px;
+}
+
+/* MEDIA QUERY FOR MOBILE PHONES AND SMALLER */
+@media screen and (max-width: 1023px) {
+    #map {
+        height: 400px;
+    }
 }
