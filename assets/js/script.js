@@ -1,6 +1,8 @@
+// ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
 var searchForm = document.querySelector("#search-form");
 var cityUserInputEl = document.querySelector("#city-input");
 var invalidCity = document.getElementById("invalid-city");
+var invalidFilter = document.getElementById("invalid-filter");
 var columnTwoEl = document.querySelector("#column-two");
 var foodFilterEl = document.getElementById("food-filter");
 var eventFilterEl = document.getElementById("event-filter");
@@ -10,10 +12,7 @@ var historyHeaderEl = document.querySelector("#history-header");
 var historyTitleEl = document.querySelector("#history-title");
 var searchHistoryButtonsEl = document.querySelector("#search-history-buttons");
 
-// ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
-// ----- Global Variables ----- //
-
-// created global variables with object structure to organize each api call
+// created global object structure
 var map;
 var cityData = {
     userInput: {
@@ -56,7 +55,6 @@ var attractData = {
 };
 var cityString = "";
 
-// ------------------------------------------------------------------------------------------------------------------------------------- //
 // generates a random number to randomly select the password characters based on the appropriate array.
 function randomNumber(min, max) {
     var value = Math.floor(Math.random() * (max - min + 1) + min);
@@ -65,7 +63,6 @@ function randomNumber(min, max) {
 }
 
 // ----- Grab User Input ----- //
-// create function to obtain user input
 // grab city, state input
 // grab dietary filter checkbox input
 // grab event filter input
@@ -96,15 +93,15 @@ function getUserInput(event) {
         console.log("error");
         return;
     }
+
+    // hides the error if it's a valid city
     invalidCity.className = 'hide';
     city();
 }
 
-// ------------------------------------------------------------------------------------------------------------------------------------- //
 // ----- fetch Google geoCoding ----- //
-// this function will fetch lat/lon of the user inputted (city, state)
+// this function fetches lat/lon of the user inputted (city, state)
 // fetched data is assigned to global variable that will be used for another API
-// in the future fetched data will be a part of the data structure
 // call trip advisory api functions
 function city() {
     // google geocode api to search for user input
@@ -121,25 +118,18 @@ function city() {
 
             restaurants();
         })
+        // error for invalid city
         .catch(function (error) {
-            // Not a valid city
-            // ----------------- we could have a text box show up above the search to let the user know they need to enter a valid city
-            // invalidCity.className = 'invalid-search'; // should remove hide class to show error text p, but it's not working
             console.log("NOT A VALID CITY");
             console.log(error);
         })
 }
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ----- fetch Trip Advisory  ----- //
-// this function will fetch restaurant data using lat/lon
-// fetched data will be assign to global vraiables to be used generate random itinerary
-// in the future data will be assigned to data structure
-// in the future use random number generator choose 3 random restaurants
-// in the future function will take in dietary filter data parameter
-// need to figure out algorithm for restOne/restTwo/dinner sorting
+// this function fetches restaurant data using lat/lon
+// fetched data is assign to global vraiables to be used generate random itinerary
+// takes in dietary filter data parameter
 function restaurants() {
     fetch("https://tripadvisor1.p.rapidapi.com/restaurants/list-by-latlng?limit=30&currency=USD&distance=2&lunit=km&lang=en_US&latitude="
         + cityData.cityCoord.lat + "&longitude=" + cityData.cityCoord.lon, {
@@ -166,20 +156,18 @@ function restaurants() {
                     break;
             }
 
+            // filtered array
             var arrFiltered = [];
-            console.log(data);
-            var newData = data.data;
 
             // if there is a filter then run the for loop below
             if (key !== " ") {
                 // loops through cuisine data to find filter
                 for (var k = 0; k < key.length; k++) {
-                    for (var i = 0; i < newData.length; i++) {
-                        if (newData[i].name) {
-                            for (var j = 0; j < newData[i].cuisine.length; j++) {
-                                if (newData[i].cuisine[j].name === key[k]) {
-                                    console.log(newData[i].cuisine[j].name);
-                                    arrFiltered.push(newData[i]);
+                    for (var i = 0; i < data.data.length; i++) {
+                        if (data.data[i].name) {
+                            for (var j = 0; j < data.data[i].cuisine.length; j++) {
+                                if (data.data[i].cuisine[j].name === key[k]) {
+                                    arrFiltered.push(data.data[i]);
                                 }
                             }
                         }
@@ -203,23 +191,28 @@ function restaurants() {
                     }
                 }
 
+                // if there's one or less filter options do the search on the whole data array and return error to let user know
+                invalidFilter.className = 'hide';
+
                 if (arrFiltered.length <= 1) {
                     for (var i = 0; i < data.data.length; i++) {
                         if (data.data[i].name) {
                             arrFiltered.push(data.data[i]);
                         }
                     }
+                    invalidFilter.className = 'invalid-filter-input';
                 }
 
+                // index variables for restaurant data
                 var restOneIdx = 0;
                 var restTwoIdx = 0;
 
+                // as long as the two random indexs are the same keep calling the random number function to get two different random numbers
                 while (restOneIdx === restTwoIdx) {
                     restOneIdx = randomNumber(0, arrFiltered.length - 1);
                     restTwoIdx = randomNumber(0, arrFiltered.length - 1);
                 }
 
-                console.log(arrFiltered);
                 // updates restaurant information
                 restData.restOne.lon = arrFiltered[restOneIdx].longitude;
                 restData.restOne.lat = arrFiltered[restOneIdx].latitude;
@@ -238,17 +231,19 @@ function restaurants() {
                         arrFiltered.push(data.data[i]);
                     }
                 }
-                // arrFiltered = data.data.filter(d => !d.name == false); ---> another way to filter
-                // stores restaurant data
+
+                // index variables for restaurant data
                 var restOneIdx = 0;
                 var restTwoIdx = 0;
 
                 if (arrFiltered.length > 1) {
+                    // as long as the two random indexs are the same keep calling the random number function to get two different random numbers
                     while (restOneIdx === restTwoIdx) {
                         restOneIdx = randomNumber(0, arrFiltered.length - 1);
                         restTwoIdx = randomNumber(0, arrFiltered.length - 1);
                     }
                 }
+
                 // updates restaurant information
                 restData.restOne.lon = arrFiltered[restOneIdx].longitude;
                 restData.restOne.lat = arrFiltered[restOneIdx].latitude;
@@ -260,23 +255,19 @@ function restaurants() {
                 restData.restTwo.url = arrFiltered[restTwoIdx].web_url;
             }
 
-            console.log(arrFiltered);
+            // go to attraction tripadvisor api
             attractions();
         })
         .catch(err => {
             console.log(err);
         });
 }
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ----- fetch Trip Advisory  ----- //
-// this function will fetch attraction data using lat/lon
-// fetched data will be assign to global variables to be used generate random itinerary
-// in the future data will be assigned to data structure
-// in the future perhaps combine restaurants and attractions functions to keep code DRY
-// in the future function will take in attraction filter (if possible)
+// this function fetches attraction data using lat/lon
+// fetched data is assigned to global variables to be used generate random itinerary
+// takes in attraction filter
 function attractions() {
     fetch("https://tripadvisor1.p.rapidapi.com/attractions/list-by-latlng?lunit=km&currency=USD&limit=30&distance=5&lang=en_US&longitude="
         + cityData.cityCoord.lon + "&latitude=" + cityData.cityCoord.lat, {
@@ -298,7 +289,6 @@ function attractions() {
             // if there is a filter then run the for loop below
             if (key !== " ") {
                 // loops through subcategory data to find filter
-
                 for (var i = 0; i < data.data.length; i++) {
                     if (data.data[i].subcategory) {
                         for (var j = 0; j < data.data[i].subcategory.length; j++) {
@@ -326,22 +316,26 @@ function attractions() {
                     }
                 }
 
+                // if there's one or less filter options do the search on the whole data array and return error to let user know
+                invalidFilter.className = 'hide';
+
                 if (arrFiltered2 <= 1) {
                     for (var i = 0; i < data.data.length; i++) {
                         arrFiltered2.push(data.data[i]);
                     }
+                    invalidFilter.className = 'invalid-filter-input';
                 }
 
+                // event indexes for random numbers
                 var eventOneIdx = 0;
                 var eventTwoIdx = 0;
 
+                // as long as the two random indexs are the same keep calling the random number function to get two different random numbers
                 while (eventOneIdx === eventTwoIdx) {
                     eventOneIdx = randomNumber(0, arrFiltered2.length - 1);
                     eventTwoIdx = randomNumber(0, arrFiltered2.length - 1);
                 }
 
-                console.log(eventOneIdx);
-                console.log(eventTwoIdx);
                 // updates event information
                 attractData.eventOne.lon = arrFiltered2[eventOneIdx].longitude;
                 attractData.eventOne.lat = arrFiltered2[eventOneIdx].latitude;
@@ -358,11 +352,13 @@ function attractions() {
                 for (var i = 0; i < data.data.length; i++) {
                     arrFiltered2.push(data.data[i]);
                 }
+
                 // checks if there's more then one in the array then filter
                 var eventOneIdx = 0;
                 var eventTwoIdx = 0;
 
                 if (arrFiltered2.length > 1) {
+                    // as long as the two random indexs are the same keep calling the random number function to get two different random numbers
                     while (eventOneIdx === eventTwoIdx) {
                         eventOneIdx = randomNumber(0, arrFiltered2.length);
                         eventTwoIdx = randomNumber(0, arrFiltered2.length);
@@ -380,15 +376,120 @@ function attractions() {
                 attractData.eventTwo.url = arrFiltered2[eventTwoIdx].web_url;
             }
 
-            console.log(arrFiltered2);
+            // generates the intinerary
             generateItinerary();
-            // displayItinerary();
         })
         .catch(err => {
             console.log(err);
         });
 }
+
 // ------------------------------------------------------------------------------------------------------------------------------------- //
+// ------ generate Itinerary  ------ //
+// this function pulls recently fetched data and contains it into an object
+// the object includes the city name, waypoints, fetched restaurants/event locations, and respective urls
+// calls display Itinerary function
+function generateItinerary() {
+    var displayCity = cityData.userInput.searchTerm.toUpperCase();
+    var cityLatCoord = cityData.cityCoord.lat;
+    var cityLonCoord = cityData.cityCoord.lon;
+    var wayPointArray = ["A", "B", "C", "D"];
+    var placeArray = [restData.restOne.restName, attractData.eventOne.eventName, restData.restTwo.restName, attractData.eventTwo.eventName];
+    var urlArray = [restData.restOne.url, attractData.eventOne.url, restData.restTwo.url, attractData.eventTwo.url];
+    var latArray = [restData.restOne.lat, attractData.eventOne.lat, restData.restTwo.lat, attractData.eventTwo.lat];
+    var lonArray = [restData.restOne.lon, attractData.eventOne.lon, restData.restTwo.lon, attractData.eventTwo.lon];
+
+    var itineraryObject = { "city": displayCity, "cityLat": cityLatCoord, "cityLong": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray };
+
+    saveHistory(itineraryObject);
+    displayItinerary(itineraryObject);
+}
+
+// ------ save history  ------ //
+// this function saves data for recently fetched itineraries
+// this function saves to local storage
+function saveHistory(saveObject) {
+    // pulls in previously saved data
+    var searchHistory = JSON.parse(localStorage.getItem("search-history"));
+
+    // displays search history header and button -------------------------------------
+    historyTitleEl.textContent = "Search History";
+    clearCitiesButton.innerHTML = "<i class='fas fa-trash'></i>"
+    historyTitleEl.appendChild(clearCitiesButton);
+
+    // creates button ----------------------------------------------------------------
+    var buttonEl = document.createElement("button");
+    buttonEl.classList = "button expanded";
+    buttonEl.textContent = saveObject.city;
+    // determines next id number to assign and assigns it
+    var nextId = searchHistory.length;
+    buttonEl.setAttribute("id", nextId);
+    searchHistoryButtonsEl.appendChild(buttonEl);
+
+    searchHistory.push(saveObject);
+    localStorage.setItem("search-history", JSON.stringify(searchHistory));
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------- //
+// ------ display Itinerary  ------ //
+// this function will DOM display recently generated or favorite/searched event click onto page
+// DOM create button for user to re-generate a new itinerary if desired
+// DOM create button for user to save
+//
+// (event listener) if save call save to local storage "favorites or bookmarks" unless function was called by user clicking from favorites
+// (event listener) if user decides to regenerate, call city function
+// create algorithm logic to identify if this function was called from a favorite click, search click, or submit click
+// in the future error handle to exclude already generated restaurants/attractions ?
+function displayItinerary(displayObject) {
+
+    // clear old data
+    columnTwoEl.textContent = "";
+
+    // create Foundation card element
+    var cardEl = document.createElement("div");
+    cardEl.classList = "card itinerary";
+    cardEl.setAttribute("id", "itinerary");
+
+    // create element for card title (city name)
+    var titleEl = document.createElement("div");
+    titleEl.textContent = "Itinerary for " + displayObject.city;
+    titleEl.classList = "card-divider";
+    titleEl.setAttribute("id", "itinerary-title");
+    cardEl.appendChild(titleEl);
+
+    // create element for itinerary section
+    var listEl = document.createElement("div");
+    listEl.classList = "card-section";
+    listEl.setAttribute("id", "itinerary-list");
+
+    for (var i = 0; i < 4; i++) {
+        // create element for each place
+        var placeEl = document.createElement("a");
+        placeEl.classList = "button event";
+        placeEl.setAttribute("href", displayObject.url[i]);
+        placeEl.setAttribute("target", "_blank");
+        placeEl.textContent = displayObject.waypoint[i] + ": " + displayObject.place[i];
+
+        listEl.appendChild(placeEl);
+
+        cardEl.appendChild(listEl);
+        columnTwoEl.appendChild(cardEl);
+    }
+
+    // updates global variables from local storage
+    restData.restOne.lon = displayObject.long[0];
+    restData.restOne.lat = displayObject.lat[0];
+    restData.restTwo.lon = displayObject.long[2];
+    restData.restTwo.lat = displayObject.lat[2];
+    attractData.eventOne.lon = displayObject.long[1];
+    attractData.eventOne.lat = displayObject.lat[1];
+    attractData.eventTwo.lon = displayObject.long[3];
+    attractData.eventTwo.lat = displayObject.lat[3];
+    cityData.cityCoord.lat = displayObject.cityLat;
+    cityData.cityCoord.lon = displayObject.cityLong;
+
+    initMap();
+}
 
 // ----- create Google Map  ----- //
 // this function pin points on google map that given restuarant & attraction lat/lon
@@ -400,7 +501,6 @@ window.initMap = function () {
     const directionsRenderer = new google.maps.DirectionsRenderer();
 
     if (!cityData.cityCoord.lat || !cityData.cityCoord.lon) {
-        console.log("in here");
         return;
     }
 
@@ -446,91 +546,6 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
     );
 }
 
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-// ------ generate Itinerary  ------ //
-// this function pulls recently fetched data and contains it into an object
-// the object includes the city name, waypoints, fetched restaurants/event locations, and respective urls
-// calls display Itinerary function
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-function generateItinerary() {
-    var displayCity = cityData.userInput.searchTerm.toUpperCase();
-    var cityLatCoord = cityData.cityCoord.lat;
-    var cityLonCoord = cityData.cityCoord.lon;
-    var wayPointArray = ["A", "B", "C", "D"];
-    var placeArray = [restData.restOne.restName, attractData.eventOne.eventName, restData.restTwo.restName, attractData.eventTwo.eventName];
-    var urlArray = [restData.restOne.url, attractData.eventOne.url, restData.restTwo.url, attractData.eventTwo.url];
-    var latArray = [restData.restOne.lat, attractData.eventOne.lat, restData.restTwo.lat, attractData.eventTwo.lat];
-    var lonArray = [restData.restOne.lon, attractData.eventOne.lon, restData.restTwo.lon, attractData.eventTwo.lon];
-
-    var itineraryObject = { "city": displayCity, "cityLat": cityLatCoord, "cityLong": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray };
-
-    displayItinerary(itineraryObject);
-    saveHistory(itineraryObject);
-}
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-// ------ display Itinerary  ------ //
-// this function will DOM display recently generated or favorite/searched event click onto page
-// DOM create button for user to re-generate a new itinerary if desired
-// DOM create button for user to save
-//
-// (event listener) if save call save to local storage "favorites or bookmarks" unless function was called by user clicking from favorites
-// (event listener) if user decides to regenerate, call city function
-// create algorithm logic to identify if this function was called from a favorite click, search click, or submit click
-// in the future error handle to exclude already generated restaurants/attractions ?
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-function displayItinerary(displayObject) {
-
-    // clear old data
-    columnTwoEl.textContent = "";
-
-    // create Foundation card element
-    var cardEl = document.createElement("div");
-    cardEl.classList = "card itinerary";
-    cardEl.setAttribute("id", "itinerary");
-
-    // create element for card title (city name)
-    var titleEl = document.createElement("div");
-    titleEl.textContent = "Itinerary for " + displayObject.city;
-    titleEl.classList = "card-divider";
-    titleEl.setAttribute("id", "itinerary-title");
-    cardEl.appendChild(titleEl);
-
-    // create element for itinerary section
-    var listEl = document.createElement("div");
-    listEl.classList = "card-section";
-    listEl.setAttribute("id", "itinerary-list");
-
-    for (var i = 0; i < 4; i++) {
-        // create element for each place
-        var placeEl = document.createElement("a");
-        placeEl.classList = "button event";
-        placeEl.setAttribute("href", displayObject.url[i]);
-        placeEl.setAttribute("target", "_blank");
-        placeEl.textContent = displayObject.waypoint[i] + ": " + displayObject.place[i];
-
-        listEl.appendChild(placeEl);
-
-        cardEl.appendChild(listEl);
-        columnTwoEl.appendChild(cardEl);
-    }
-
-    restData.restOne.lon = displayObject.long[0];
-    restData.restOne.lat = displayObject.lat[0];
-    restData.restTwo.lon = displayObject.long[2];
-    restData.restTwo.lat = displayObject.lat[2];
-    attractData.eventOne.lon = displayObject.long[1];
-    attractData.eventOne.lat = displayObject.lat[1];
-    attractData.eventTwo.lon = displayObject.long[3];
-    attractData.eventTwo.lat = displayObject.lat[3];
-    cityData.cityCoord.lat = displayObject.cityLat;
-    cityData.cityCoord.lon = displayObject.cityLong;
-
-    initMap();
-}
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-
 // ------ load from search history button  ------ //
 // this function loads data from previously fetched itineraries
 // this function gets from local storage and display onto page
@@ -543,34 +558,6 @@ function loadFromButton(event) {
 
     displayItinerary(currentLoad);
 }
-
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-// ------ save history  ------ //
-// this function saves data for recently fetched itineraries
-// this function saves to local storage
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-function saveHistory(saveObject) {
-    // pulls in previously saved data
-    var searchHistory = JSON.parse(localStorage.getItem("search-history"));
-
-    // displays search history header and button -------------------------------------
-    historyTitleEl.textContent = "Search History";
-    clearCitiesButton.innerHTML = "<i class='fas fa-trash'></i>"
-    historyTitleEl.appendChild(clearCitiesButton);
-
-    // creates button ----------------------------------------------------------------
-    var buttonEl = document.createElement("button");
-    buttonEl.classList = "button expanded";
-    buttonEl.textContent = saveObject.city;
-    // determines next id number to assign and assigns it
-    var nextId = searchHistory.length;
-    buttonEl.setAttribute("id", nextId);
-    searchHistoryButtonsEl.appendChild(buttonEl);
-
-    searchHistory.push(saveObject);
-    localStorage.setItem("search-history", JSON.stringify(searchHistory));
-}
-// ------------------------------------------------------------------------------------------------------------------------------------- //
 
 // ------ load page  ------ //
 // this function will load the static homepage
@@ -597,8 +584,8 @@ function loadPage() {
         }
     }
 }
-// ------------------------------------------------------------------------------------------------------------------------------------- //
 
+// clear local storage
 var clearCitiesHandler = function () {
     localStorage.removeItem("search-history");
     location.reload();
