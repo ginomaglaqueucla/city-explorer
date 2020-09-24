@@ -31,6 +31,9 @@
                     <form id="search-form" class="search-form">
                         <label>Search by City, State</br>(2 Letter Code):</label>
                         <p id="invalid-city" class="invalid-search hide">Not a valid city or improper format</p>
+                        <p id="invalid-filter" class="invalid-filter-input hide">Not enough filter options, returned all
+                            values
+                        </p>
                         <input id="city-input" class="city-input" placeholder="ex. Los Angeles, CA">
                         <button id="search-button" class="search-button">
                             <i class="fas fa-search"></i>
@@ -84,9 +87,9 @@
             </div>
         </div>
     </main>
+    <!-- Import script tags -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://use.fontawesome.com/releases/v5.14.0/js/all.js" data-auto-replace-svg="nest"></script>
-    <!-- <div id="map-script-container"></div> -->
     <script src="./assets/js/script.js"></script>
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap"></script>
