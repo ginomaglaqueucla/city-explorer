@@ -6,6 +6,8 @@ var foodFilterEl = document.getElementById("food-filter");
 var eventFilterEl = document.getElementById("event-filter");
 var clearCitiesButton = document.getElementById("clear-cities");
 var mapScriptContainer = document.getElementById('map-script-container');
+var historyHeaderEl = document.querySelector("#history-header");
+var historyTitleEl = document.querySelector("#history-title");
 var searchHistoryButtonsEl = document.querySelector("#search-history-buttons");
 
 // ----- Global Variables -------------------------------------------------------------------------------------------------------------- //
@@ -144,7 +146,7 @@ function restaurants() {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
-            "x-rapidapi-key": "14df69b00emshc85f3fe070e0c10p12bedcjsna5d97aca97be"
+            "x-rapidapi-key": "df019328ffmsha32c19b7bd011fcp1d0dcdjsn4478570b6189"
         }
     })
 
@@ -158,6 +160,9 @@ function restaurants() {
             switch (key) {
                 case "Italian":
                     key = ['Italian', 'Pizza'];
+                    break;
+                case "Asian":
+                    key = ['Asian', 'Japanese', 'Chinese', 'Sushi'];
                     break;
             }
 
@@ -271,7 +276,7 @@ function attractions() {
         "method": "GET",
         "headers": {
             "x-rapidapi-host": "tripadvisor1.p.rapidapi.com",
-            "x-rapidapi-key": "14df69b00emshc85f3fe070e0c10p12bedcjsna5d97aca97be"
+            "x-rapidapi-key": "df019328ffmsha32c19b7bd011fcp1d0dcdjsn4478570b6189"
         }
     })
         .then(response => {
@@ -351,9 +356,8 @@ function attractions() {
             }
 
             console.log(arrFiltered2);
-            initMap();
-            // displayItinerary();
             generateItinerary();
+            // displayItinerary();
         })
         .catch(err => {
             console.log(err);
@@ -366,7 +370,6 @@ function attractions() {
 // dependent on completion of geocCoding & trip advisory data fetch
 // in the future will take in data structure as parameter
 // assign map data to data structure 
-
 window.initMap = function () {
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer();
@@ -401,12 +404,14 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
     attractData.eventTwo.lon = attractData.eventTwo.lon.toString();
     attractData.eventTwo.lat = attractData.eventTwo.lat.toString();
 
+    console.log(restData.restTwo.lon);
+    console.log(restData.restTwo.lat);
+
     directionsService.route(
         {
             origin: restData.restOne.lat + ", " + restData.restOne.lon,
             destination: attractData.eventOne.lat + ", " + attractData.eventOne.lon,
             waypoints: [{ location: restData.restTwo.lat + ", " + restData.restTwo.lon }, { location: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon }],
-
             travelMode: google.maps.TravelMode.DRIVING
         },
         (response, status) => {
@@ -418,31 +423,6 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
         }
     );
 }
-
-// function createMap() {
-// clear out old script if there is some
-// if (document.getElementById("google-maps-api")) {
-//     document.getElementById("google-maps-api").remove();
-//     $('head').children('script').remove();
-//     $('head').children('style').addClass("google-style-api");
-// $('.google-style-api').remove();
-// }
-
-// Create the script tag, set the appropriate attributes
-// var script = document.createElement('script');
-// script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCv_iF_YniNOH9mI6WvJc66w5bo3_PXXCg&callback=initMap';
-// script.defer = false;
-// script.id = "google-maps-api";
-
-// Append the 'script' element to 'head'
-// mapScriptContainer.appendChild(script);
-
-// initates function to create google map
-
-
-// }
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ generate Itinerary  ------ //
@@ -460,52 +440,12 @@ function generateItinerary() {
     var latArray = [restData.restOne.lat, attractData.eventOne.lat, restData.restTwo.lat, attractData.eventTwo.lat];
     var lonArray = [restData.restOne.lon, attractData.eventOne.lon, restData.restTwo.lon, attractData.eventTwo.lon];
 
-    var itineraryObject = {
-        "city": displayCity, "cityLat": cityLatCoord, "cityLong": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray,
-        "long": lonArray, "restData": restData, "cityData": cityData, "attractData": attractData
-    };
+    var itineraryObject = { "city": displayCity, "cityLat": cityLatCoord, "cityLong": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray };
 
     displayItinerary(itineraryObject);
     saveHistory(itineraryObject);
 }
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-
-
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-// ------ generate Itinerary  ------ //
-// this function will use recently fetched data that is contained in data structure and create itinerary
-// itinerary includes breakfast -> attraction -> lunch -> attraction -> dinner
-// itinerary will be save to local storage "search history"
-// call display Itinerary function
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-
-
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-// ------ load page  ------ //
-// this function will load the static homepage
-// this function will get local storage (favorites & search history) and display onto page
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-
-
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-// ------ display Itinerary  ------ //
-// this function will DOM display recently generated or favorite/searched event click onto page
-// DOM create button for user to re-generate a new itinerary if desired
-// DOM create button for user to save
-//
-// (event listener) if save call save to local storage "favorites or bookmarks" unless function was called by user clicking from favorites
-// (event listener) if user decides to regenerate, call city function
-// create algorithm logic to identify if this function was called from a favorite click, search click, or submit click
-// in the future error handle to exclude already generated restaurants/attractions ?
-// ------------------------------------------------------------------------------------------------------------------------------------- //
-
-
-
-// globally call load page function 
-
-// event listener for submit click (user input)
-// event listener for favorites click
-// event listener for search history click
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
 // ------ display Itinerary  ------ //
@@ -567,24 +507,19 @@ function displayItinerary(displayObject) {
 
     initMap();
 }
-
 // ------------------------------------------------------------------------------------------------------------------------------------- //
+
 // ------ load from search history button  ------ //
 // this function loads data from previously fetched itineraries
 // this function gets from local storage and display onto page
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-
 function loadFromButton(event) {
     // pulls in previously saved data
     var searchHistory = JSON.parse(localStorage.getItem("search-history"));
     var buttonIndex = event.target.id;
     var currentLoad = searchHistory[buttonIndex];
 
-    //    var itineraryObject = {"city": displayCity, "city-lat": cityLatCoord, "city-long": cityLonCoord, "waypoint": wayPointArray, "place": placeArray, "url": urlArray, "lat": latArray, "long": lonArray};
-
     displayItinerary(currentLoad);
-
-    // createMap();
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------- //
@@ -592,10 +527,14 @@ function loadFromButton(event) {
 // this function saves data for recently fetched itineraries
 // this function saves to local storage
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-
 function saveHistory(saveObject) {
     // pulls in previously saved data
     var searchHistory = JSON.parse(localStorage.getItem("search-history"));
+
+    // displays search history header and button -------------------------------------
+    historyTitleEl.textContent = "Search History";
+    clearCitiesButton.innerHTML = "<i class='fas fa-trash'></i>"
+    historyTitleEl.appendChild(clearCitiesButton);
 
     // creates button ----------------------------------------------------------------
     var buttonEl = document.createElement("button");
@@ -605,21 +544,16 @@ function saveHistory(saveObject) {
     var nextId = searchHistory.length;
     buttonEl.setAttribute("id", nextId);
     searchHistoryButtonsEl.appendChild(buttonEl);
-    // -------------------------------------------------------------------------------
 
     searchHistory.push(saveObject);
     localStorage.setItem("search-history", JSON.stringify(searchHistory));
-    // window.location.reload();
-    // loadFromButton();
-
 }
-
 // ------------------------------------------------------------------------------------------------------------------------------------- //
+
 // ------ load page  ------ //
 // this function will load the static homepage
 // this function will get local storage (favorites & search history) and display onto page
 // ------------------------------------------------------------------------------------------------------------------------------------- //
-
 function loadPage() {
 
     var getHistory = JSON.parse(localStorage.getItem("search-history"));
@@ -641,6 +575,7 @@ function loadPage() {
         }
     }
 }
+// ------------------------------------------------------------------------------------------------------------------------------------- //
 
 var clearCitiesHandler = function () {
     localStorage.removeItem("search-history");
