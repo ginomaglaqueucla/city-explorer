@@ -55,6 +55,14 @@ var attractData = {
 };
 var cityString = "";
 
+// loads last city itinerary on page load
+function init() {
+    var lastCity = localStorage.getItem("search-history");
+    lastCity = JSON.parse(lastCity);
+    lastCity = lastCity[lastCity.length - 1];
+    displayItinerary(lastCity);
+}
+
 // generates a random number to randomly select the password characters based on the appropriate array.
 function randomNumber(min, max) {
     var value = Math.floor(Math.random() * (max - min + 1) + min);
@@ -593,6 +601,7 @@ var clearCitiesHandler = function () {
 
 // globally call load page function 
 loadPage();
+init();
 
 // event listener for submit click (user input)
 // event listener for favorites click
