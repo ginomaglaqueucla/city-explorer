@@ -173,11 +173,6 @@ function restaurants() {
             // if there is a filter then run the for loop below
             if (key !== " ") {
                 // loops through cuisine data to find filter
-                // var index = 0;
-
-                // arrFiltered = newData.filter(d => d.cuisine.name.filter(c => key.filter(k => c === k)));
-
-                // while (arrFiltered.length <= 1 && index < key.length) {
                 for (var k = 0; k < key.length; k++) {
                     for (var i = 0; i < newData.length; i++) {
                         if (newData[i].name) {
@@ -185,16 +180,28 @@ function restaurants() {
                                 if (newData[i].cuisine[j].name === key[k]) {
                                     console.log(newData[i].cuisine[j].name);
                                     arrFiltered.push(newData[i]);
-                                    // newData = newData[i].filter(d => d.cuisine[j].name !== key[index]);
                                 }
                             }
                         }
                     }
-                    // index++;
                 }
-                // }
-                arrFiltered.filter((item, index) => arrFiltered.indexOf(item) === index);
-                // arrFiltered = [...new Set(arrFiltered)];
+
+                // run duplicate filter twice because we're splicing the array within the loop
+                for (let i = 0; i < arrFiltered.length; i++) {
+                    for (let j = 1 + i; j < arrFiltered.length; j++) {
+                        if (arrFiltered[i].latitude === arrFiltered[j].latitude && arrFiltered[i].longitude === arrFiltered[j].longitude) {
+                            arrFiltered.splice(j, 1);
+                        }
+                    }
+                }
+
+                for (let i = 0; i < arrFiltered.length; i++) {
+                    for (let j = 1 + i; j < arrFiltered.length; j++) {
+                        if (arrFiltered[i].latitude === arrFiltered[j].latitude && arrFiltered[i].longitude === arrFiltered[j].longitude) {
+                            arrFiltered.splice(j, 1);
+                        }
+                    }
+                }
 
                 if (arrFiltered.length <= 1) {
                     for (var i = 0; i < data.data.length; i++) {
@@ -291,12 +298,30 @@ function attractions() {
             // if there is a filter then run the for loop below
             if (key !== " ") {
                 // loops through subcategory data to find filter
+
                 for (var i = 0; i < data.data.length; i++) {
                     if (data.data[i].subcategory) {
                         for (var j = 0; j < data.data[i].subcategory.length; j++) {
                             if (data.data[i].subcategory[j].name === key) {
                                 arrFiltered2.push(data.data[i]);
                             }
+                        }
+                    }
+                }
+
+                // run duplicate filter twice because we're splicing the array within the loop
+                for (let i = 0; i < arrFiltered2.length; i++) {
+                    for (let j = 1 + i; j < arrFiltered2.length; j++) {
+                        if (arrFiltered2[i].latitude === arrFiltered2[j].latitude && arrFiltered2[i].longitude === arrFiltered2[j].longitude) {
+                            arrFiltered2.splice(j, 1);
+                        }
+                    }
+                }
+
+                for (let i = 0; i < arrFiltered2.length; i++) {
+                    for (let j = 1 + i; j < arrFiltered2.length; j++) {
+                        if (arrFiltered2[i].latitude === arrFiltered2[j].latitude && arrFiltered2[i].longitude === arrFiltered2[j].longitude) {
+                            arrFiltered2.splice(j, 1);
                         }
                     }
                 }
@@ -404,14 +429,11 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
     attractData.eventTwo.lon = attractData.eventTwo.lon.toString();
     attractData.eventTwo.lat = attractData.eventTwo.lat.toString();
 
-    console.log(restData.restTwo.lon);
-    console.log(restData.restTwo.lat);
-
     directionsService.route(
         {
             origin: restData.restOne.lat + ", " + restData.restOne.lon,
-            destination: attractData.eventOne.lat + ", " + attractData.eventOne.lon,
-            waypoints: [{ location: restData.restTwo.lat + ", " + restData.restTwo.lon }, { location: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon }],
+            waypoints: [{ location: attractData.eventOne.lat + ", " + attractData.eventOne.lon, stopover: true }, { location: restData.restTwo.lat + ", " + restData.restTwo.lon, stopover: true }],
+            destination: attractData.eventTwo.lat + ", " + attractData.eventTwo.lon,
             travelMode: google.maps.TravelMode.DRIVING
         },
         (response, status) => {
