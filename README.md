@@ -4,7 +4,7 @@
 
 This is a City Explorer.
 
-You can search for a city,state in the US along with different filters for restaurants and events.
+You can search for a city, state in the US along with different filters for restaurants and events.
 
 You will get a random itinerary generated with a path on google maps for directions.
 
